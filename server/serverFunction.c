@@ -169,8 +169,16 @@ int loginUser(char* message, int socket) {
             char server_message[100] = "\0";
             char temp[512];
             if (atoi(row[3]) == 0) {
-                // Push account into signing in account table
-                mysql_query(con, "UPDATE users SET status = 1 WHERE (id = 1);");
+                char query1[BUFF_SIZE] = "\0";
+                // Update status in users table
+                sprintf(query1, "UPDATE users SET status = 1 WHERE username = '%s'", username);
+                printf("%s\n", query1);
+                if (mysql_query(con, query1)) {
+                    sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+                    printf("%s\n", serverMess);
+                    send(socket, serverMess, strlen(serverMess), 0);
+                    return 0;
+                }
                 sprintf(server_message, "%d|Successfully logged in|\n", LOGIN_SUCCESS);
                 printf("%s\n", serverMess);
                 send(socket, server_message, sizeof(server_message), 0);
@@ -199,8 +207,9 @@ int logoutUser(char* message, int socket)
     token = strtok(NULL, "|");
     strcpy(username, token);
 
-    // Delete in database
-    sprintf(query, "DELETE FROM using_accounts where username='%s'", username);
+    // Update in database
+    sprintf(query, "UPDATE users SET status = 0 WHERE username = '%s'", username);
+    printf("%s\n", query);
     if (mysql_query(con, query))
     {
         sprintf(server_message, "%d|%s\n", QUERY_FAIL, mysql_error(con));
