@@ -89,13 +89,25 @@
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
                     <!-- <li class="nav-item"><a class="nav-link" href="myFavor.php">My Favorite Places</a></li> -->
                 </ul>
+               
                 <form class="nav-bar-nav ms-auto">
-                    <a class="btn btn-outline-dark" href="login.html">
-                        Sign In
-                    </a>
-                    <button class="btn btn-outline-dark" type="submit">
-                        Register
-                    </button>
+                    <?php
+                        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
+                            echo ("<a class=\"btn btn-outline-dark\">
+                                        Xin chào, ". $_SESSION['username'] ."
+                                    </a>
+                            ");
+                        }
+                        else {
+                            echo ("<a class=\"btn btn-outline-dark\" href=\"login.php\">
+                                    Sign In
+                                </a>
+                                <button class=\"btn btn-outline-dark\" type=\"submit\">
+                                    Register
+                                </button>
+                            ");
+                        }
+                    ?>
                 </form>
             </div>
         </div>

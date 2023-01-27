@@ -15,7 +15,7 @@ int main(int argc, char const* argv[])
 
   char* server = "127.0.0.1";
   char* user = "root";
-  char* password = "";
+  char* password = "dptk2008";
 
   if (mysql_real_connect(con, server, user, password, NULL, 0, NULL, 0) == NULL)
   {
@@ -56,22 +56,32 @@ int main(int argc, char const* argv[])
   printf("%s\n", "Using database ...");
 
   // ****CREATE USER TABLE****
-  // if (mysql_query(con, "DROP TABLE IF EXISTS users"))
-  // {
-  //   fprintf(stderr, "%s\n", mysql_error(con));
-  //   mysql_close(con);
-  //   exit(1);
-  // }
+  if (mysql_query(con, "DROP TABLE IF EXISTS users"))
+  {
+    fprintf(stderr, "%s\n", mysql_error(con));
+    mysql_close(con);
+    exit(1);
+  }
 
-  // if (mysql_query(con, "CREATE TABLE users(id INT PRIMARY KEY AUTO_INCREMENT, username VARCHAR(255) UNIQUE, password VARCHAR(255))"))
-  // {
-  //   fprintf(stderr, "%s\n", mysql_error(con));
-  //   mysql_close(con);
-  //   exit(1);
-  // }
-  // printf("%s\n", "Create table users succesfully ...");
+  if (mysql_query(con, "CREATE TABLE users (id INT NOT NULL AUTO_INCREMENT, username VARCHAR(255) NULL, password VARCHAR(255) NULL, status INT, PRIMARY KEY(`id`));"))
+  {
+    fprintf(stderr, "%s\n", mysql_error(con));
+    mysql_close(con);
+    exit(1);
+  }
+  printf("%s\n", "Create table users succesfully ...");
 
-  // ****CREATE USER QUESTION****
+  if (mysql_query(con, "INSERT INTO users (username, password, status) "
+    "VALUES ('username1', '123456', 0),"
+    "('username2', '123456', 0);"))
+  {
+    fprintf(stderr, "%s\n", mysql_error(con));
+    mysql_close(con);
+    exit(1);
+  }
+  printf("%s\n", "Inser database succesfully ...");
+
+  // ****CREATE PLACE TABLE****
   if (mysql_query(con, "DROP TABLE IF EXISTS places"))
   {
     fprintf(stderr, "%s\n", mysql_error(con));
@@ -79,7 +89,7 @@ int main(int argc, char const* argv[])
     exit(1);
   }
   if (mysql_query(con,
-    "CREATE TABLE places ( id INT NOT NULL AUTO_INCREMENT, name VARCHAR(45) NULL, type VARCHAR(45) NULL, image TEXT NULL, description TEXT NULL, PRIMARY KEY(id));"
+    "CREATE TABLE places (id INT NOT NULL AUTO_INCREMENT, name VARCHAR(45) NULL, type VARCHAR(45) NULL, image TEXT NULL, description TEXT NULL, PRIMARY KEY(id));"
   ))
   {
     fprintf(stderr, "%s\n", mysql_error(con));

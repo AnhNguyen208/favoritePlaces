@@ -119,8 +119,7 @@ int registerUser(char* message, int socket)
     }
 }
 
-int loginUser(char* message, int socket)
-{
+int loginUser(char* message, int socket) {
     printf("Start handle login\n");
     char username[255] = "\0";
     char password[255] = "\0";
@@ -128,66 +127,58 @@ int loginUser(char* message, int socket)
     char* token;
     char query[BUFF_SIZE] = "\0";
     // Split message to get username and password
+    printf("message: %s\n", message);
     token = strtok(message, "|");
     token = strtok(NULL, "|");
     strcpy(username, token);
     token = strtok(NULL, "|");
     strcpy(password, token);
-    encryptPassword(password);
-    //    printf("%s %s\n",username, password);
+
+    printf("Username:%s , Password:%s\n", username, password);
 
     // Query to validate account
     // Check username
-    sprintf(query, "SELECT * from users where username='%s'", username);
+    sprintf(query, "SELECT * FROM users WHERE username = '%s'", username);
     printf("%s\n", query);
-    if (mysql_query(con, query))
-    {
+    if (mysql_query(con, query)) {
         sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+        printf("%s\n", serverMess);
         send(socket, serverMess, strlen(serverMess), 0);
         return 0;
     }
+
     MYSQL_RES* result = mysql_store_result(con);
-    if (mysql_num_rows(result) == 0)
-    {
+
+    if (mysql_num_rows(result) == 0) {
         sprintf(serverMess, "%d|Invalid username|\n", USERNAME_NOTFOUND);
+        printf("%s\n", serverMess);
         send(socket, serverMess, strlen(serverMess), 0);
         return 0;
     }
-    else
-    {
+    else {
         // Check password
         MYSQL_ROW row = mysql_fetch_row(result);
-        if (strcmp(row[2], password))
-        {
+        if (strcmp(row[2], password)) {
             sprintf(serverMess, "%d|Password is incorrect|\n", PASSWORD_INCORRECT);
+            printf("%s\n", serverMess);
             send(socket, serverMess, strlen(serverMess), 0);
             return 0;
         }
-        else
-        {
+        else {
             // Check account is signing in other device
             char server_message[100] = "\0";
             char temp[512];
-            sprintf(query, "SELECT * from using_accounts where username='%s'", username);
-            if (mysql_query(con, query))
-            {
-                sprintf(serverMess, "%d|%s\n", QUERY_FAIL, mysql_error(con));
-                send(socket, serverMess, strlen(serverMess), 0);
-                return 0;
-            }
-            MYSQL_RES* result = mysql_store_result(con);
-            if (mysql_num_rows(result) == 0)
-            {
+            if (atoi(row[3]) == 0) {
                 // Push account into signing in account table
-                sprintf(query, "INSERT INTO using_accounts (username) VALUES ('%s')", username);
-                mysql_query(con, query);
+                mysql_query(con, "UPDATE users SET status = 1 WHERE (id = 1);");
                 sprintf(server_message, "%d|Successfully logged in|\n", LOGIN_SUCCESS);
+                printf("%s\n", serverMess);
                 send(socket, server_message, sizeof(server_message), 0);
                 return 1;
             }
-            else
-            {
+            else {
                 sprintf(server_message, "%d|Your account is signing in other device|\n", USERNAME_IS_SIGNIN);
+                printf("%s\n", serverMess);
                 send(socket, server_message, sizeof(server_message), 0);
                 return 0;
             }
