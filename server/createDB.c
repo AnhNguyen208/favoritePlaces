@@ -88,14 +88,18 @@ int main(int argc, char const* argv[])
   }
   printf("%s\n", "Create table questions succesfully ...");
 
-  // if (mysql_query(
-  //   con,
-  //   "INSERT INTO users(username, password) VALUES('user1', '123456'), ('user2', '310801')"))
-  // {
-  //   fprintf(stderr, "%s\n", mysql_error(con));
-  //   mysql_close(con);
-  //   exit(1);
-  // }
+  if (mysql_query(con, "INSERT INTO places (name, type, image, description) "
+    "VALUES ('name1', 'type1', 'assets/image/image1.jpg', 'description1'),"
+    "('name2', 'type2', 'assets/image/image2.jpg', 'description2'),"
+    "('name3', 'type3', 'assets/image/image3.jpg', 'description3'),"
+    "('name4', 'type4', 'assets/image/image4.jpg', 'description4'),"
+    "('name5', 'type5', 'assets/image/image5.jpg', 'description5');"))
+  {
+    fprintf(stderr, "%s\n", mysql_error(con));
+    mysql_close(con);
+    exit(1);
+  }
+  printf("%s\n", "Inser database succesfully ...");
 
   mysql_close(con);
   exit(0);
