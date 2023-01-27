@@ -87,14 +87,14 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="myFavor.php">My Favorite Places</a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="myFavor.php">My Favorite Places</a></li> -->
                 </ul>
                 <form class="nav-bar-nav ms-auto">
-                    <button class="btn btn-outline-dark" type="submit">
+                    <a class="btn btn-outline-dark" href="login.html">
                         Sign In
-                    </button>
+                    </a>
                     <button class="btn btn-outline-dark" type="submit">
-                        Sign Out
+                        Register
                     </button>
                 </form>
             </div>
@@ -130,7 +130,7 @@
                                                 </div>
                                             </div>
                                             <div class=\"card-footer p-4 pt-0 border-top-0 bg-transparent\">
-                                                <div class=\"text-center\"><a class=\"btn btn-outline-dark mt-auto\" href=\"#\">Add to Favorite</a></div>
+                                                <div class=\"text-center\"><a class=\"btn btn-outline-dark mt-auto\" href=\"#\">View Place</a></div>
                                             </div>
                                         </div>
                                     </div>
