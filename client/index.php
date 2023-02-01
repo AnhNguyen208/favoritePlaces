@@ -46,9 +46,9 @@
         $_SESSION["position"] = 1;
         $_SESSION['place_list'] = array();
 
-        echo $_SESSION['num_places'];
+        //echo $_SESSION['num_places'];
     } else {
-        //echo "<script>alert('Loading fail');</script>";
+        echo "<script>alert('Loading fail');</script>";
     }
     while ($_SESSION['position'] <= $_SESSION['num_places']) {
         $msg = "03|" . $_SESSION["position"] . "|";
@@ -80,7 +80,6 @@
     }
     socket_close($socket);
     ?>
-    
     <!-- Header-->
     <header class="bg-dark py-5">
         <div class="container px-4 px-lg-5 my-5">
@@ -112,13 +111,45 @@
                                             </div>
                                             <div class=\"card-footer p-4 pt-0 border-top-0 bg-transparent\">
                                                 <div class=\"text-center\">
-                                                    <a class=\"btn btn-outline-dark mt-auto\" href=\"#\">Favaorite</a>
+                                                    <a class=\"btn btn-outline-dark mt-auto\" href=\"index.php?AddFavorite=". $_SESSION['place_list'][$i]->get_id() ."\">Favorite</a>
                                                     <a class=\"btn btn-outline-dark mt-auto\" href=\"#\">Share</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                             ");
+                }
+
+                if(isset($_GET['AddFavorite'])) {
+                    if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
+                        //echo "<script>alert('Add favorite: ". $_GET['AddFavorite'] ."');</script>";
+                        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
+
+                        // connect to server
+                        $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
+
+                        $msg = "05|" . $_SESSION['id_user'] . "|" . $_GET['AddFavorite'] . "|";
+
+                        $ret = socket_write($socket, $msg, strlen($msg));
+                        if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+
+                        // receive response from server
+                        $response = socket_read($socket, 1024);
+                        if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+
+                        $response = explode("|", $response);
+
+                        if ($response[0] == "13") {
+                            echo "<script>alert('Add success');</script>";
+                        } else {
+                            echo "<script>alert('Add fail');</script>";
+                        }
+                        socket_close($socket);
+                    }
+                    else {
+                        echo "<script>alert('Not logged in');</script>";
+                        echo "<script>window.location.href = 'login.php';</script>";
+                    }    
                 }
                 ?>
             </div>

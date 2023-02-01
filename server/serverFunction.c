@@ -55,6 +55,15 @@ void handle_message(char* message, int socket) {
         showListPlaces(message, socket);
         break;
     }
+    case SHOW_LIST_FAVORITE_PLACES: {
+        printf("Handle favorite list practices\n");
+        showListFavoritePlaces(message, socket);
+        break;
+    }
+    case ADD_FAVARITE_PLACE: {
+        printf("Handle add favorite place\n");
+        addFavoritePlace(message, socket);
+    }
     default:
         break;
     }
@@ -179,7 +188,7 @@ int loginUser(char* message, int socket) {
                     send(socket, serverMess, strlen(serverMess), 0);
                     return 0;
                 }
-                sprintf(server_message, "%d|Successfully logged in|\n", LOGIN_SUCCESS);
+                sprintf(server_message, "%d|%d|Successfully logged in|\n", LOGIN_SUCCESS, atoi(row[0]));
                 printf("%s\n", serverMess);
                 send(socket, server_message, sizeof(server_message), 0);
                 return 1;
@@ -274,8 +283,124 @@ void showListPlaces(char* message, int socket) {
     return;
 }
 
-void encryptPassword(char* password)
-{
+void showListFavoritePlaces(char* message, int socket) {
+    printf("Start send list favorite places\n");
+    int position;
+    int id_user;
+    char temp[BUFF_SIZE];
+    char temp1[BUFF_SIZE];
+    char temp2[BUFF_SIZE] = "\0";
+    char serverMess[BUFF_SIZE] = "\0";
+    char query[200] = "\0";
+    char* token;
+    int level;
+
+    // Get position
+    printf("%s\n", message);
+    token = strtok(message, "|");
+    token = strtok(NULL, "|");
+    strcpy(temp, token);
+    id_user = atoi(temp);
+    token = strtok(NULL, "|");
+    strcpy(temp1, token);
+    position = atoi(temp1);
+    printf("ID user: %d\n", id_user);
+    printf("Position %d\n", position);
+    // Get position to choose appropriate question
+    if (position == 0) {
+        sprintf(query, "SELECT * FROM favoriteplaces WHERE is_user = %d", id_user);
+        printf("%s\n", query);
+        if (mysql_query(con, query)) {
+            sprintf(serverMess, "%d|%s\n", QUERY_FAIL, mysql_error(con));
+            send(socket, serverMess, strlen(serverMess), 0);
+            return;
+        }
+        MYSQL_RES* result = mysql_store_result(con);
+        if (result == NULL) {
+            finish_with_error(con);
+        }
+        MYSQL_ROW row;
+        while ((row = mysql_fetch_row(result)))
+        {
+            strcat(temp2, row[3]);
+            strcat(temp2, "|");
+        }
+        sprintf(serverMess, "%d|%lld|%s\n", NUM_FAVORITE_PLACES, mysql_num_rows(result), temp2);
+        printf("Server message: %s\n", serverMess);
+    }
+    // else {
+    //     sprintf(query, "SELECT * FROM places WHERE id = %d", position);
+    //     printf("%s\n", query);
+    //     if (mysql_query(con, query)) {
+    //         sprintf(serverMess, "%d|%s\n", QUERY_FAIL, mysql_error(con));
+    //         send(socket, serverMess, strlen(serverMess), 0);
+    //         return;
+    //     }
+    //     MYSQL_RES* result = mysql_store_result(con);
+    //     if (result == NULL) {
+    //         finish_with_error(con);
+    //     }
+    //     MYSQL_ROW row;
+    //     if ((row = mysql_fetch_row(result)) != NULL) {
+    //         sprintf(serverMess, "%d|%s|%s|%s|%s|%s|\n", SHOW_PLACE, row[0], row[1], row[2], row[3], row[4]);
+    //         printf("Server message: %s\n", serverMess);
+    //     }
+    // }
+    send(socket, serverMess, strlen(serverMess), 0);
+    return;
+}
+
+void addFavoritePlace(char* message, int socket) {
+    printf("Start add favorite place\n");
+    int position;
+    char is_user[BUFF_SIZE];
+    char id_place[BUFF_SIZE];
+    char serverMess[BUFF_SIZE] = "\0";
+    char query[200] = "\0";
+    char query1[200] = "\0";
+    char* token;
+
+    // Get infor
+    printf("message: %s\n", message);
+    token = strtok(message, "|");
+    token = strtok(NULL, "|");
+    strcpy(is_user, token);
+    token = strtok(NULL, "|");
+    strcpy(id_place, token);
+
+    sprintf(query, "SELECT * FROM favoriteplaces WHERE is_user = %d AND id_place = %d", atoi(is_user), atoi(id_place));
+    printf("%s\n", query);
+    if (mysql_query(con, query)) {
+        sprintf(serverMess, "%d|%s\n", QUERY_FAIL, mysql_error(con));
+        send(socket, serverMess, strlen(serverMess), 0);
+        return;
+    }
+    MYSQL_RES* result = mysql_store_result(con);
+    if (result == NULL) {
+        finish_with_error(con);
+    }
+    MYSQL_ROW row;
+    if ((row = mysql_fetch_row(result)) == NULL) {
+        sprintf(query1, "INSERT INTO favoriteplaces (is_user, id_place) VALUES (%d, %d);", atoi(is_user), atoi(id_place));
+        if (mysql_query(con, query1)) {
+            sprintf(serverMess, "%d|%s\n", QUERY_FAIL, mysql_error(con));
+            send(socket, serverMess, strlen(serverMess), 0);
+            return;
+        }
+        sprintf(serverMess, "%d|Success!!|\n", ADD_FAVARITE_PLACE_SUCCESS);
+        send(socket, serverMess, strlen(serverMess), 0);
+        printf("Server message: %s\n", serverMess);
+        return;
+    }
+    else {
+        sprintf(serverMess, "%d|Fail!!|\n", ADD_FAVARITE_PLACE_FAIL);
+        send(socket, serverMess, strlen(serverMess), 0);
+        printf("Server message: %s\n", serverMess);
+        return;
+    }
+}
+
+void encryptPassword(char* password) {
     for (int i = 0; i < strlen(password); i++)
     {
         if ((int)password[i] > i)

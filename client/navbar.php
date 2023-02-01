@@ -48,12 +48,14 @@
 
                     if ($response[0] == "9") {
                         $_SESSION['username'] = '';
+                        $_SESSION['id_user'] = 0;
                         $_SESSION['login'] = 0;
                         echo "<script>alert('Log out success');</script>";
                         echo "<script>window.location.href = 'index.php';</script>";
                     } else {
                         echo "<script>alert('Logout fail');</script>";
                     }
+                    socket_close($socket);
                 }
             ?>
         </div>

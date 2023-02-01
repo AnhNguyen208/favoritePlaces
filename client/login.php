@@ -94,12 +94,15 @@
 
             if ($response[0] == "8") {
                 $_SESSION['username'] = $_POST['username'];
+                $_SESSION['id_user'] = $response[1];
                 $_SESSION['login'] = 1;
                 echo "<script>alert('Login success');</script>";
+                // echo "<script>alert('id_user: ". $_SESSION['id_user'] ."');</script>";
                 echo "<script>window.location.href = 'index.php';</script>";
             } else {
                 echo "<script>alert('Login fail');</script>";
             }
+            socket_close($socket);
         }
     ?>
     <!-- Javascript -->

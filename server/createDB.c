@@ -96,7 +96,7 @@ int main(int argc, char const* argv[])
     mysql_close(con);
     exit(1);
   }
-  printf("%s\n", "Create table questions succesfully ...");
+  printf("%s\n", "Create table places succesfully ...");
 
   if (mysql_query(con, "INSERT INTO places (name, type, image, description) "
     "VALUES ('name1', 'type1', 'assets/image/image1.jpg', 'description1'),"
@@ -109,7 +109,22 @@ int main(int argc, char const* argv[])
     mysql_close(con);
     exit(1);
   }
-  printf("%s\n", "Inser database succesfully ...");
+  printf("%s\n", "Insert database succesfully ...");
+
+  // ****CREATE FAVORITE PLACE TABLE****
+  if (mysql_query(con, "DROP TABLE IF EXISTS favoriteplaces"))
+  {
+    fprintf(stderr, "%s\n", mysql_error(con));
+    mysql_close(con);
+    exit(1);
+  }
+  if (mysql_query(con, "CREATE TABLE favoriteplaces (`id` INT NOT NULL AUTO_INCREMENT, is_user INT NULL, shared_by_id INT NULL, id_place INT NULL, PRIMARY KEY(`id`));"))
+  {
+    fprintf(stderr, "%s\n", mysql_error(con));
+    mysql_close(con);
+    exit(1);
+  }
+  printf("%s\n", "Create table favoriteplaces succesfully ...");
 
   mysql_close(con);
   exit(0);
