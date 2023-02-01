@@ -74,7 +74,7 @@
         </div>
     </div>
     <?php
-        if(isset($_POST['username']) && $_POST['password']) {
+        if(isset($_POST['username']) && isset($_POST['password'])) {
 
             $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
 
@@ -106,10 +106,10 @@
         }
     ?>
     <!-- Javascript -->
-    <script src="assets/js/jquery-1.11.1.min.js"></script>
+    <script src="login_form/assets/js/jquery-1.11.1.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/jquery.backstretch.min.js"></script>
-    <script src="assets/js/scripts.js"></script>
+    <script src="login_form/assets/js/jquery.backstretch.min.js"></script>
+    <script src="login_form/assets/js/scripts.js"></script>
     <!--[if lt IE 10]>
             <script src="assets/js/placeholder.js"></script>
         <![endif]-->

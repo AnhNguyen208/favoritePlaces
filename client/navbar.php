@@ -21,9 +21,9 @@
                         echo ("<a class=\"btn btn-outline-dark\" href=\"login.php\">
                                 Sign In
                             </a>
-                            <button class=\"btn btn-outline-dark\" type=\"submit\">
+                            <a class=\"btn btn-outline-dark\" href=\"register.php\">
                                 Register
-                            </button>
+                            </a>
                         ");
                     }
                 ?>

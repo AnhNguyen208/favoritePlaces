@@ -69,8 +69,7 @@ void handle_message(char* message, int socket) {
     }
 }
 
-int registerUser(char* message, int socket)
-{
+int registerUser(char* message, int socket) {
     char username[255] = "\0";
     char password[255] = "\0";
     char serverMess[BUFF_SIZE] = "\0";
@@ -83,11 +82,9 @@ int registerUser(char* message, int socket)
     strcpy(username, token);
     token = strtok(NULL, "|");
     strcpy(password, token);
-    encryptPassword(password);
 
     // Check username is existed ?
-    sprintf(query, "SELECT * FROM users WHERE username = '%s' ",
-        username);
+    sprintf(query, "SELECT * FROM users WHERE username = '%s' ", username);
     if (mysql_query(con, query))
     {
         sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
@@ -104,17 +101,7 @@ int registerUser(char* message, int socket)
     else
     {
         // Insert new account into database
-        sprintf(query, "INSERT INTO users (username, password) VALUES ('%s', '%s')",
-            username, password);
-        if (mysql_query(con, query))
-        {
-            sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
-            send(socket, serverMess, strlen(serverMess), 0);
-            return 0;
-        }
-
-        // Insert this account into signing in accounts
-        sprintf(query, "INSERT INTO using_accounts (username) VALUES ('%s')", username);
+        sprintf(query, "INSERT INTO users (username, password, status) VALUES ('%s', '%s', 0)", username, password);
         if (mysql_query(con, query))
         {
             sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
@@ -206,7 +193,7 @@ int loginUser(char* message, int socket) {
 int logoutUser(char* message, int socket)
 {
     printf("Start handle logout\n");
-    char username[255] = "\0";
+    char username[20] = "\0";
     char server_message[BUFF_SIZE] = "\0";
     char* token;
     char query[300] = "\0";
@@ -289,7 +276,7 @@ void showListFavoritePlaces(char* message, int socket) {
     int id_user;
     char temp[BUFF_SIZE];
     char temp1[BUFF_SIZE];
-    char temp2[BUFF_SIZE] = "\0";
+    char temp2[50] = "\0";
     char serverMess[BUFF_SIZE] = "\0";
     char query[200] = "\0";
     char* token;
