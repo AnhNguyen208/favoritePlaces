@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,6 +12,7 @@
     <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/form-elements.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -24,6 +26,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
 </head>
+
 <body>
     <?php
         session_start();
@@ -54,7 +57,8 @@
                             </div>
                         </div>
                         <div class="form-bottom">
-                            <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="login-form">
+                            <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post"
+                                class="login-form">
                                 <div class="form-group">
                                     <label class="sr-only" for="username">Username</label>
                                     <input type="text" name="username" placeholder="Username..."
@@ -110,8 +114,10 @@
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="login_form/assets/js/jquery.backstretch.min.js"></script>
     <script src="login_form/assets/js/scripts.js"></script>
+    
     <!--[if lt IE 10]>
             <script src="assets/js/placeholder.js"></script>
         <![endif]-->
 </body>
+
 </html>
