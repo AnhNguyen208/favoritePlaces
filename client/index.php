@@ -174,9 +174,9 @@
                         socket_close($socket);
                     }
                     else {
-                        echo "<script>alert('Not logged in');</script>";
+                        echo "<script>alert('You have to log in first');</script>";
                         echo "<script>window.location.href = 'login.php';</script>";
-                    }    
+                    }
                 }
 
                 if(isset($_GET['share'])) {
@@ -185,7 +185,7 @@
                 ?>
             </div>
         </div>
-        
+
     </section>
     <!-- Footer-->
     <footer class="py-5 bg-dark">

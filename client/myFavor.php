@@ -34,7 +34,7 @@
             // receive response from server
             $response = socket_read($socket, 1024);
             if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-            
+
             //echo json_encode($response);
 
             $response = explode("|", $response);
@@ -42,7 +42,7 @@
             if ($response[0] == "15") {
                 $_SESSION['num_favorite_places'] = $response[1];
                 $_SESSION['position_favorite_place'] = array();
-                for ($i = 0; $i < $_SESSION['num_favorite_places']; $i++) { 
+                for ($i = 0; $i < $_SESSION['num_favorite_places']; $i++) {
                     array_push($_SESSION['position_favorite_place'], $response[$i+2]);
                 }
                 $_SESSION['favorite_place_list'] = array();
@@ -82,9 +82,9 @@
             socket_close($socket);
         }
         else {
-            echo "<script>alert('Not logged in');</script>";
+            echo "<script>alert('You have to log in first');</script>";
             echo "<script>window.location.href = 'login.php';</script>";
-        }    
+        }
     ?>
     <!-- Header-->
     <header class="bg-dark py-5">
@@ -124,7 +124,7 @@
                 } else {
                     $total = 0;
                 }
-                
+
             ?>
             </div>
         </div>
