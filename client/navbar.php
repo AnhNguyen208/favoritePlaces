@@ -2,7 +2,9 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-4 px-lg-5">
         <a class="navbar-brand" href="#!">PlaSha</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                 <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
@@ -21,9 +23,9 @@
                         echo ("<a class=\"btn btn-outline-dark\" href=\"login.php\">
                                 Sign In
                             </a>
-                            <button class=\"btn btn-outline-dark\" type=\"submit\">
+                            <a class=\"btn btn-outline-dark\" href=\"register.php\">
                                 Register
-                            </button>
+                            </a>
                         ");
                     }
                 ?>
@@ -48,12 +50,14 @@
 
                     if ($response[0] == "9") {
                         $_SESSION['username'] = '';
+                        $_SESSION['id_user'] = 0;
                         $_SESSION['login'] = 0;
                         echo "<script>alert('Log out success');</script>";
                         echo "<script>window.location.href = 'index.php';</script>";
                     } else {
                         echo "<script>alert('Logout fail');</script>";
                     }
+                    socket_close($socket);
                 }
             ?>
         </div>

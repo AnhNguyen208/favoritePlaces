@@ -7,6 +7,8 @@ int registerUser(char*, int);
 int loginUser(char*, int);
 int logoutUser(char*, int);
 void showListPlaces(char*, int);
+void showListFavoritePlaces(char*, int);
+void addFavoritePlace(char*, int);
 void finish_with_error(MYSQL* con);
 void encryptPassword(char*);
 
