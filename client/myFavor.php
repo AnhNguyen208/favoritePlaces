@@ -25,9 +25,9 @@
             $request->getFavouriteList();
         }
         else {
-            echo "<script>alert('Not logged in');</script>";
+            echo "<script>alert('You have to log in first');</script>";
             echo "<script>window.location.href = 'login.php';</script>";
-        }    
+        }
     ?>
     <!-- Header-->
     <header class="bg-dark py-5">

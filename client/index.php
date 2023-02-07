@@ -112,9 +112,9 @@
                        $request->add_favorite_place();
                     }
                     else {
-                        echo "<script>alert('Not logged in');</script>";
+                        echo "<script>alert('You have to log in first');</script>";
                         echo "<script>window.location.href = 'login.php';</script>";
-                    }    
+                    }
                 }
                 
                 if( isset($_POST['friend']) && isset($_POST['id_place'])) {
@@ -128,7 +128,7 @@
                 ?>
             </div>
         </div>
-        
+
     </section>
     <!-- Footer-->
     <footer class="py-5 bg-dark">
