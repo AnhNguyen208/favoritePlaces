@@ -18,68 +18,11 @@
 <body>
     <?php
         session_start();
-        include("place.php");
         include("navbar.php");
+        include("request.php");
+        $request = new Request();
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
-            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
-
-            // connect to server
-            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
-
-            $msg = "04|" . $_SESSION['id_user'] . "|" . "0|";
-
-            $ret = socket_write($socket, $msg, strlen($msg));
-            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-            // receive response from server
-            $response = socket_read($socket, 1024);
-            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-            
-            //echo json_encode($response);
-
-            $response = explode("|", $response);
-
-            if ($response[0] == "15") {
-                $_SESSION['num_favorite_places'] = $response[1];
-                $_SESSION['position_favorite_place'] = array();
-                for ($i = 0; $i < $_SESSION['num_favorite_places']; $i++) { 
-                    array_push($_SESSION['position_favorite_place'], $response[$i+2]);
-                }
-                $_SESSION['favorite_place_list'] = array();
-
-                // echo json_encode($response);
-            } else {
-                echo "<script>alert('Loading fail');</script>";
-            }
-
-            foreach ($_SESSION['position_favorite_place'] as $position) {
-                $msg = "03|" . $position . "|";
-
-                $ret = socket_write($socket, $msg, strlen($msg));
-                if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-                // receive response from server
-                $response = socket_read($socket, 1024);
-                if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-                //echo $response;
-
-                // split response from server
-                $response = explode("|", $response);
-
-                if ($response[0] == "2") {
-                    $p = new Place();
-                    $p->set_id($response[1]);
-                    $p->set_name($response[2]);
-                    $p->set_type($response[3]);
-                    $p->set_image($response[4]);
-                    $p->set_description($response[5]);
-                } else {
-                    echo "<script>alert('Places loading fail');</script>";
-                    echo "<script>window.location.href = 'test.php';</script>";
-                }
-                array_push($_SESSION['favorite_place_list'], $p);
-            }
-            socket_close($socket);
+            $request->getFavouriteList();
         }
         else {
             echo "<script>alert('Not logged in');</script>";
@@ -112,11 +55,6 @@
                                                         " . $_SESSION['favorite_place_list'][$i]->get_type() . "
                                                 </div>
                                             </div>
-                                            <div class=\"card-footer p-4 pt-0 border-top-0 bg-transparent\">
-                                                <div class=\"text-center\">
-                                                    <a class=\"btn btn-outline-dark mt-auto\" href=\"#\">Share</a>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                             ");
@@ -124,7 +62,10 @@
                 } else {
                     $total = 0;
                 }
-                
+
+                if(isset($_POST['logout'])) {
+                    $request->logout();
+                }
             ?>
             </div>
         </div>

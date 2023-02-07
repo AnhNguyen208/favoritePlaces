@@ -9,6 +9,8 @@ int logoutUser(char*, int);
 void showListPlaces(char*, int);
 void showListFavoritePlaces(char*, int);
 void addFavoritePlace(char*, int);
+void showListFriend(char*, int);
+void sharePlace(char*, int);
 void finish_with_error(MYSQL* con);
 void encryptPassword(char*);
 

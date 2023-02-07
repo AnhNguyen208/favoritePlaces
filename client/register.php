@@ -31,6 +31,7 @@
 <body>
     <?php
         session_start();
+        include("request.php");
     ?>
     <!-- Top content -->
     <div class="top-content">
@@ -89,30 +90,8 @@
                     echo "<script>alert('Input password again');</script>";
                 } 
                 else {
-                    $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
-
-                    // connect to server
-                    $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
-
-                    $msg = "01|" . $_POST['username'] . "|" . $_POST['password'] . "|";
-
-                    $ret = socket_write($socket, $msg, strlen($msg));
-                    if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-                    // receive response from server
-                    $response = socket_read($socket, 1024);
-                    if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-
-                    $response = explode("|", $response);
-
-                    if ($response[0] == "11") {
-                        echo "<script>alert('Register success');</script>";
-                        // echo "<script>alert('id_user: ". $_SESSION['id_user'] ."');</script>";
-                        echo "<script>window.location.href = 'login.php';</script>";
-                    } else {
-                        echo "<script>alert('Register fail');</script>";
-                    }
-                    socket_close($socket);
+                    $request = new Request();
+                    $request->register();
                 }
 
 
