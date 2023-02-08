@@ -50,13 +50,18 @@
         <div class="container px-4 px-lg-5 mt-5">
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                 <?php
-                if (isset($_SESSION['num_places']) && isset($_SESSION['friend_list'])) {
+                if (isset($_SESSION['num_places'])) {
                     $total = $_SESSION['num_places'];
-                    $friend = $_SESSION['friend_list'];
                 } else {
                     $total = 0;
+                }
+                if(isset($_SESSION['friend_list'])) {
+                    $friend = $_SESSION['friend_list'];
+                }
+                else {
                     $friend = "";
                 }
+
                 for ($i = 1; $i <= $total; $i++) {
                     echo (" <div class=\"col mb-5\">
                                 <div class=\"card h-100\">

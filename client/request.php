@@ -118,7 +118,7 @@
             // connect to server
             $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
 
-            $msg = "04|" . $_SESSION['id_user'] . "|" . "0|";
+            $msg = "04|" . $_SESSION['id_user'] . "|";
 
             $ret = socket_write($socket, $msg, strlen($msg));
             if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
