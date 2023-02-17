@@ -65,9 +65,9 @@ void handle_message(char* message, int socket) {
         addFavoritePlace(message, socket);
         break;
     }
-    case SHOW_LIST_FRIEND: {
-        printf("Handle list friend\n");
-        showListFriend(message, socket);
+    case SHOW_LIST_USER: {
+        printf("Handle list user\n");
+        getListUser(message, socket);
         break;
     }
     case SHARE_PLACE: {
@@ -78,6 +78,11 @@ void handle_message(char* message, int socket) {
     case SHOW_SHARED_PLACE: {
         printf("Show share place\n");
         showListSharedPlaces(message, socket);
+        break;
+    }
+    case SHOW_LIST_FRIEND: {
+        printf("Show list friend\n");
+        showListFriend(message, socket);
         break;
     }
     default:
@@ -408,7 +413,7 @@ void addFavoritePlace(char* message, int socket) {
     }
     MYSQL_ROW row;
     if ((row = mysql_fetch_row(result)) == NULL) {
-        sprintf(query1, "INSERT INTO favoriteplaces (is_user, id_place) VALUES (%d, %d);", atoi(is_user), atoi(id_place));
+        sprintf(query1, "INSERT INTO favoriteplaces (is_user, id_place, status) VALUES (%d, %d, 1);", atoi(is_user), atoi(id_place));
         if (mysql_query(con, query1)) {
             sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
             send(socket, serverMess, strlen(serverMess), 0);
@@ -427,8 +432,8 @@ void addFavoritePlace(char* message, int socket) {
     }
 }
 
-void showListFriend(char* message, int socket) {
-    printf("Start send list friends\n");
+void getListUser(char* message, int socket) {
+    printf("Start send list users\n");
     int position;
     char temp[BUFF_SIZE];
     char serverMess[BUFF_SIZE] = "\0";
@@ -454,7 +459,7 @@ void showListFriend(char* message, int socket) {
             return;
         }
         MYSQL_RES* result = mysql_store_result(con);
-        sprintf(serverMess, "%d|%lld|\n", NUM_FRIEND, mysql_num_rows(result));
+        sprintf(serverMess, "%d|%lld|\n", NUM_USER, mysql_num_rows(result));
         printf("Server message: %s\n", serverMess);
     }
     else {
@@ -471,7 +476,7 @@ void showListFriend(char* message, int socket) {
         }
         MYSQL_ROW row;
         if ((row = mysql_fetch_row(result)) != NULL) {
-            sprintf(serverMess, "%d|%s|%s|\n", SHOW_FRIEND, row[0], row[1]);
+            sprintf(serverMess, "%d|%s|%s|\n", SHOW_USER, row[0], row[1]);
             printf("Server message: %s\n", serverMess);
         }
     }
@@ -529,6 +534,48 @@ void sharePlace(char* message, int socket) {
         printf("Server message: %s\n", serverMess);
         return;
     }
+}
+
+void showListFriend(char* message, int socket) {
+    printf("Start send list shared places\n");
+    int id_user;
+    char temp[BUFF_SIZE];
+    char temp1[BUFF_SIZE];
+    char temp2[50] = "\0";
+    char serverMess[BUFF_SIZE] = "\0";
+    char query[200] = "\0";
+    char* token;
+
+    // Get position
+    printf("%s\n", message);
+    token = strtok(message, "|");
+    token = strtok(NULL, "|");
+    strcpy(temp, token);
+    id_user = atoi(temp);
+    printf("ID user: %d\n", id_user);
+    // Get position to choose appropriate question
+    sprintf(query, "SELECT * FROM friends WHERE user1 = %d AND status = 1", id_user);
+    printf("%s\n", query);
+    if (mysql_query(con, query)) {
+        sprintf(serverMess, "%d|%s\n", QUERY_FAIL, mysql_error(con));
+        send(socket, serverMess, strlen(serverMess), 0);
+        return;
+    }
+    MYSQL_RES* result = mysql_store_result(con);
+    if (result == NULL) {
+        finish_with_error(con);
+    }
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(result)))
+    {
+        strcat(temp2, row[2]);
+        strcat(temp2, "|");
+    }
+    sprintf(serverMess, "%d|%lld|%s\n", NUM_FRIEND, mysql_num_rows(result), temp2);
+    printf("Server message: %s\n", serverMess);
+
+    send(socket, serverMess, strlen(serverMess), 0);
+    return;
 }
 
 void encryptPassword(char* password) {

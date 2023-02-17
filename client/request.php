@@ -3,7 +3,7 @@
     include("user.php");
     
     class Request {
-        function getFriendList() {
+        function getAllUser() {
             $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
 
             // connect to server
@@ -21,14 +21,14 @@
             $response = explode("|", $response);
 
             if ($response[0] == "17") {
-                $_SESSION['num_friend'] = $response[1];
+                $_SESSION['num_user'] = $response[1];
                 $_SESSION["position"] = 1;
-                $_SESSION['friend_list'] = '';
+                $_SESSION['user_list'] = '';
 
             } else {
                 echo "<script>alert('Loading fail');</script>";
             }
-            while ($_SESSION['position'] <= $_SESSION['num_friend']) {
+            while ($_SESSION['position'] <= $_SESSION['num_user']) {
                 $msg = "06|" . $_SESSION["position"] . "|";
                 $ret = socket_write($socket, $msg, strlen($msg));
                 if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
@@ -42,11 +42,8 @@
                 $response = explode("|", $response);
 
                 if ($response[0] == "18") {
-                    if($response[1] == $_SESSION['id_user']) {
-                        $_SESSION["position"] += 1;
-                        continue;
-                    }
-                    $_SESSION['friend_list'] .= "<option value=\"" . $response[1] ."\">" . $response[2] . "</option>";
+                   
+                    $_SESSION['user_list'] .= "<option value=\"" . $response[1] ."\">" . $response[2] . "</option>";
                     
                 } else {
                     echo "<script>alert('Friend loading fail');</script>";
@@ -394,6 +391,59 @@
                 array_push($_SESSION['place_list_shared'], $p);
             }
 
+            socket_close($socket);
+        }
+
+        function getFriendList() {
+            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
+
+            // connect to server
+            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
+
+            $msg = "09|" . $_SESSION['id_user'] . "|";
+
+            $ret = socket_write($socket, $msg, strlen($msg));
+            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            // receive response from server
+            $response = socket_read($socket, 1024);
+            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            $response = explode("|", $response);
+
+            if ($response[0] == "23") {
+                $_SESSION['num_friend'] = $response[1];
+                $_SESSION['position_friend'] = array();
+                for ($i = 0; $i < $_SESSION['num_friend']; $i++) { 
+                    array_push($_SESSION['position_friend'], $response[$i+2]);
+                }
+
+                $_SESSION['friend_list'] = '';
+
+            } else {
+                echo "<script>alert('Loading fail');</script>";
+            }
+            foreach($_SESSION['position_friend'] as $friend) {
+                $msg = "06|" . $friend . "|";
+                $ret = socket_write($socket, $msg, strlen($msg));
+                if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+
+                // receive response from server
+                $response = socket_read($socket, 1024);
+                if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+                //echo $response;
+
+                // split response from server
+                $response = explode("|", $response);
+
+                if ($response[0] == "18") {
+                   
+                    $_SESSION['friend_list'] .= "<option value=\"" . $response[1] ."\">" . $response[2] . "</option>";
+                    
+                } else {
+                    echo "<script>alert('Friend loading fail');</script>";
+                }
+            }
             socket_close($socket);
         }
     }
