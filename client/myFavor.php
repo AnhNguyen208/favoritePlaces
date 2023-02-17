@@ -23,6 +23,7 @@
         $request = new Request();
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
             $request->getFavouriteList();
+            $request->getListSharedPlaces();
         }
         else {
             echo "<script>alert('You have to log in first');</script>";
@@ -41,8 +42,9 @@
     <!-- Section-->
     <section class="py-5">
         <div class="container px-4 px-lg-5 mt-5">
+            <h1 class="text-center"> Danh sách địa điểm yêu thích của bạn</h1>
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                <?php
+            <?php
                 if (isset($_SESSION['num_favorite_places'])) {
                     $total = $_SESSION['num_favorite_places'];
                     for ($i = 0; $i < $total; $i++) {
@@ -65,6 +67,33 @@
 
                 if(isset($_POST['logout'])) {
                     $request->logout();
+                }
+            ?>
+            </div>
+        </div>
+        <div class="container px-4 px-lg-5 mt-5">
+            <h1 class="text-center"> Danh sách địa điểm yêu thích được chia sẻ</h1>
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            <?php
+                if (isset($_SESSION['num_shared_places'])) {
+                    $total = $_SESSION['num_shared_places'];
+                    for ($i = 0; $i < $total; $i++) {
+                    echo ("<div class=\"col mb-5\">
+                                    <div class=\"card h-100\">
+                                        <img class=\"card-img-top\" src=\"" . $_SESSION['place_list_shared'][$i]->get_image() . "\" alt=\"" .  $_SESSION['place_list_shared'][$i]->get_image() . "\" />
+                                            <div class=\"card-body p-4\">
+                                                <div class=\"text-center\">
+                                                    <h5 class=\"fw-bolder\">" . $_SESSION['place_list_shared'][$i]->get_name() . "</h5>
+                                                        " . $_SESSION['place_list_shared'][$i]->get_type() . "
+                                                    <h5 class=\"fw-bolder\"> Được chia sẻ từ: " . $_SESSION['place_list_shared'][$i]->get_share_by() . "</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            ");
+                    }
+                } else {
+                    $total = 0;
                 }
             ?>
             </div>

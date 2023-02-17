@@ -49,7 +49,7 @@
                     $_SESSION['friend_list'] .= "<option value=\"" . $response[1] ."\">" . $response[2] . "</option>";
                     
                 } else {
-                    echo "<script>alert('Places loading fail');</script>";
+                    echo "<script>alert('Friend loading fail');</script>";
                 }
                 $_SESSION["position"] += 1;
             }
@@ -167,7 +167,6 @@
                     $p->set_description($response[5]);
                 } else {
                     echo "<script>alert('Places loading fail');</script>";
-                    echo "<script>window.location.href = 'test.php';</script>";
                 }
                 array_push($_SESSION['favorite_place_list'], $p);
             }
@@ -308,6 +307,93 @@
             } else {
                 echo "<script>alert('Share fail');</script>";
             }
+            socket_close($socket);
+        }
+
+        function getListSharedPlaces() {
+            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
+
+            // connect to server
+            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
+
+            $msg = "08|" . $_SESSION['id_user'] . "|";
+
+            $ret = socket_write($socket, $msg, strlen($msg));
+            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            // receive response from server
+            $response = socket_read($socket, 1024);
+            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+            
+            //echo json_encode($response);
+
+            $response = explode("|", $response);
+
+            if ($response[0] == "21") {
+                $_SESSION['num_shared_places'] = $response[1];
+                $_SESSION['position_friend'] = array();
+                $_SESSION['position_place_shared'] = array();
+                for ($i = 0; $i < $_SESSION['num_shared_places']; $i++) { 
+                    $response1 = explode(",", $response[$i+2]);
+                    array_push($_SESSION['position_friend'], $response1[0]);
+                    array_push($_SESSION['position_place_shared'], $response1[1]);
+                }
+                $_SESSION['place_list_shared'] = array();
+
+                
+                // echo json_encode($_SESSION['position_friend']);
+            } else {
+                echo "<script>alert('Loading fail');</script>";
+            }
+
+            for ($i=0; $i < $_SESSION['num_shared_places'] ; $i++) { 
+                $msg = "03|" . $_SESSION['position_place_shared'][$i] . "|";
+
+                $ret = socket_write($socket, $msg, strlen($msg));
+                if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+
+                // receive response from server
+                $response = socket_read($socket, 1024);
+                if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+                //echo $response;
+
+                // split response from server
+                $response = explode("|", $response);
+
+                
+                if ($response[0] == "2") {
+                    $p = new Place();
+                    $p->set_id($response[1]);
+                    $p->set_name($response[2]);
+                    $p->set_type($response[3]);
+                    $p->set_image($response[4]);
+                    $p->set_description($response[5]);
+
+                } else {
+                    echo "<script>alert('Place shared loading fail');</script>";
+                }
+
+                $msg = "06|" . $_SESSION['position_friend'][$i] . "|";
+                $ret = socket_write($socket, $msg, strlen($msg));
+                if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+
+                // receive response from server
+                $response = socket_read($socket, 1024);
+                if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+                //echo $response;
+
+                // split response from server
+                $response = explode("|", $response);
+
+                if ($response[0] == "18") {
+                   $p->set_share_by($response[2]);
+                } else {
+                    echo "<script>alert('Friend loading fail');</script>";
+                }
+
+                array_push($_SESSION['place_list_shared'], $p);
+            }
+
             socket_close($socket);
         }
     }

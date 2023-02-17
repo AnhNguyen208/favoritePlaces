@@ -75,6 +75,11 @@ void handle_message(char* message, int socket) {
         sharePlace(message, socket);
         break;
     }
+    case SHOW_SHARED_PLACE: {
+        printf("Show share place\n");
+        showListSharedPlaces(message, socket);
+        break;
+    }
     default:
         break;
     }
@@ -318,7 +323,54 @@ void showListFavoritePlaces(char* message, int socket) {
         strcat(temp2, row[3]);
         strcat(temp2, "|");
     }
-    sprintf(serverMess, "%d|%lld|%s|\n", NUM_FAVORITE_PLACES, mysql_num_rows(result), temp2);
+    sprintf(serverMess, "%d|%lld|%s\n", NUM_FAVORITE_PLACES, mysql_num_rows(result), temp2);
+    printf("Server message: %s\n", serverMess);
+
+    send(socket, serverMess, strlen(serverMess), 0);
+    return;
+}
+
+void showListSharedPlaces(char* message, int socket) {
+    printf("Start send list shared places\n");
+    int position;
+    int id_user;
+    char temp[BUFF_SIZE];
+    char temp1[BUFF_SIZE];
+    char temp2[50] = "\0";
+    char serverMess[BUFF_SIZE] = "\0";
+    char query[200] = "\0";
+    char* token;
+    int level;
+
+    // Get position
+    printf("%s\n", message);
+    token = strtok(message, "|");
+    token = strtok(NULL, "|");
+    strcpy(temp, token);
+    id_user = atoi(temp);
+    token = strtok(NULL, "|");
+    printf("ID user: %d\n", id_user);
+    // Get position to choose appropriate question
+    sprintf(query, "SELECT * FROM favoriteplaces WHERE is_user = %d AND shared_by_id IS NOT NULL", id_user);
+    printf("%s\n", query);
+    if (mysql_query(con, query)) {
+        sprintf(serverMess, "%d|%s\n", QUERY_FAIL, mysql_error(con));
+        send(socket, serverMess, strlen(serverMess), 0);
+        return;
+    }
+    MYSQL_RES* result = mysql_store_result(con);
+    if (result == NULL) {
+        finish_with_error(con);
+    }
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(result)))
+    {
+        strcat(temp2, row[2]);
+        strcat(temp2, ",");
+        strcat(temp2, row[3]);
+        strcat(temp2, "|");
+    }
+    sprintf(serverMess, "%d|%lld|%s\n", NUM_SHARED_PLACE, mysql_num_rows(result), temp2);
     printf("Server message: %s\n", serverMess);
 
     send(socket, serverMess, strlen(serverMess), 0);
