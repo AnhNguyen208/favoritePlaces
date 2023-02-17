@@ -7,7 +7,7 @@
         private $type;
         private $image;
         private $share_by;
-
+        private $share_by_id;
 
         // Methods
         function set_id($id)
@@ -62,6 +62,15 @@
         function get_share_by()
         {
             return $this->share_by;
+        }
+
+         function set_share_by_id($share_by_id)
+        {
+            $this->share_by_id = $share_by_id;
+        }
+        function get_share_by_id()
+        {
+            return $this->share_by_id;
         }
     }
 ?>

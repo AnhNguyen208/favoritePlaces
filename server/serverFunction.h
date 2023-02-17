@@ -13,6 +13,7 @@ void getListUser(char*, int);
 void sharePlace(char*, int);
 void showListSharedPlaces(char*, int);
 void showListFriend(char*, int);
+void deleteFavoritePlace(char*, int);
 void finish_with_error(MYSQL* con);
 void encryptPassword(char*);
 

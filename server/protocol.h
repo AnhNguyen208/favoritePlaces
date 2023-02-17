@@ -18,6 +18,7 @@ typedef enum {
     SHOW_LIST_FRIEND,
     
     ADD_PLACE,
+    
     DELETE_FAVORITE_PLACE,
 } REQUEST_CODE;
 

@@ -85,6 +85,16 @@ void handle_message(char* message, int socket) {
         showListFriend(message, socket);
         break;
     }
+    case ADD_PLACE: {
+        printf("Add place\n");
+        showListFriend(message, socket);
+        break;
+    }
+    case DELETE_FAVORITE_PLACE: {
+        printf("Delete favorite place\n");
+        deleteFavoritePlace(message, socket);
+        break;
+    }
     default:
         break;
     }
@@ -575,6 +585,52 @@ void showListFriend(char* message, int socket) {
     printf("Server message: %s\n", serverMess);
 
     send(socket, serverMess, strlen(serverMess), 0);
+    return;
+}
+
+void deleteFavoritePlace(char* message, int socket) {
+    printf("Start delete favorite place\n");
+    char number[BUFF_SIZE];
+    char is_user[BUFF_SIZE];
+    char shared_by_id[BUFF_SIZE];
+    char id_place[BUFF_SIZE];
+    char serverMess[BUFF_SIZE] = "\0";
+    char query[200] = "\0";
+    char query1[200] = "\0";
+    char* token;
+
+    // Get infor
+    printf("message: %s\n", message);
+    token = strtok(message, "|");
+    token = strtok(NULL, "|");
+    strcpy(number, token);
+    if (atoi(number) == 2) {
+        token = strtok(NULL, "|");
+        strcpy(is_user, token);
+        token = strtok(NULL, "|");
+        strcpy(id_place, token);
+        sprintf(query1, "DELETE FROM favoriteplaces WHERE is_user = %d AND shared_by_id IS NULL AND id_place = %d;", atoi(is_user), atoi(id_place));
+
+    }
+    else {
+        token = strtok(NULL, "|");
+        strcpy(is_user, token);
+        token = strtok(NULL, "|");
+        strcpy(shared_by_id, token);
+        token = strtok(NULL, "|");
+        strcpy(id_place, token);
+        sprintf(query1, "DELETE FROM favoriteplaces WHERE is_user = %d AND shared_by_id = %d AND id_place = %d;", atoi(is_user), atoi(shared_by_id), atoi(id_place));
+
+    }
+
+    if (mysql_query(con, query1)) {
+        sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+        send(socket, serverMess, strlen(serverMess), 0);
+        return;
+    }
+    sprintf(serverMess, "%d|Success!!!|\n", DELETE_FAVORITE_PLACE_SUCCESS);
+    send(socket, serverMess, strlen(serverMess), 0);
+    printf("Server message: %s\n", serverMess);
     return;
 }
 

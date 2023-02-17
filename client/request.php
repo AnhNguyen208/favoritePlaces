@@ -3,13 +3,13 @@
     include("user.php");
     
     class Request {
-        function getAllUser() {
+        function login() {
             $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
 
             // connect to server
             $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
 
-            $msg = "06|" . "0" . "|";
+            $msg = "00|" . $_POST['username'] . "|" . $_POST['password'] . "|";
 
             $ret = socket_write($socket, $msg, strlen($msg));
             if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
@@ -20,35 +20,72 @@
 
             $response = explode("|", $response);
 
-            if ($response[0] == "17") {
-                $_SESSION['num_user'] = $response[1];
-                $_SESSION["position"] = 1;
-                $_SESSION['user_list'] = '';
-
+            if ($response[0] == "8") {
+                $_SESSION['username'] = $_POST['username'];
+                $_SESSION['id_user'] = $response[1];
+                $_SESSION['login'] = 1;
+                echo "<script>alert('Login success');</script>";
+                // echo "<script>alert('id_user: ". $_SESSION['id_user'] ."');</script>";
+                echo "<script>window.location.href = 'index.php';</script>";
             } else {
-                echo "<script>alert('Loading fail');</script>";
+                echo "<script>alert('Login fail');</script>";
             }
-            while ($_SESSION['position'] <= $_SESSION['num_user']) {
-                $msg = "06|" . $_SESSION["position"] . "|";
-                $ret = socket_write($socket, $msg, strlen($msg));
-                if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+            socket_close($socket);
+        }
 
-                // receive response from server
-                $response = socket_read($socket, 1024);
-                if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-                //echo $response;
+        function register() {
+            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
 
-                // split response from server
-                $response = explode("|", $response);
+            // connect to server
+            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
 
-                if ($response[0] == "18") {
-                   
-                    $_SESSION['user_list'] .= "<option value=\"" . $response[1] ."\">" . $response[2] . "</option>";
-                    
-                } else {
-                    echo "<script>alert('Friend loading fail');</script>";
-                }
-                $_SESSION["position"] += 1;
+            $msg = "01|" . $_POST['username'] . "|" . $_POST['password'] . "|";
+
+            $ret = socket_write($socket, $msg, strlen($msg));
+            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            // receive response from server
+            $response = socket_read($socket, 1024);
+            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            $response = explode("|", $response);
+
+            if ($response[0] == "11") {
+                echo "<script>alert('Register success');</script>";
+                // echo "<script>alert('id_user: ". $_SESSION['id_user'] ."');</script>";
+                echo "<script>window.location.href = 'login.php';</script>";
+            } else {
+                echo "<script>alert('Register fail');</script>";
+            }
+            socket_close($socket);
+        }
+
+        function logout() {
+            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
+
+            // connect to server
+            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
+
+            $msg = "02|" . $_SESSION['username'] . "|";
+
+            $ret = socket_write($socket, $msg, strlen($msg));
+            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            // receive response from server
+            $response = socket_read($socket, 1024);
+            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            $response = explode("|", $response);
+
+            if ($response[0] == "9") {
+                $_SESSION['username'] = '';
+                $_SESSION['id_user'] = 0;
+                $_SESSION['login'] = 0;
+                $_SESSION['friend_list'] = '';
+                echo "<script>alert('Log out success');</script>";
+                echo "<script>window.location.href = 'index.php';</script>";
+            } else {
+                echo "<script>alert('Logout fail');</script>";
             }
             socket_close($socket);
         }
@@ -195,13 +232,13 @@
             socket_close($socket);
         }
 
-        function login() {
+        function getAllUser() {
             $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
 
             // connect to server
             $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
 
-            $msg = "00|" . $_POST['username'] . "|" . $_POST['password'] . "|";
+            $msg = "06|" . "0" . "|";
 
             $ret = socket_write($socket, $msg, strlen($msg));
             if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
@@ -212,72 +249,35 @@
 
             $response = explode("|", $response);
 
-            if ($response[0] == "8") {
-                $_SESSION['username'] = $_POST['username'];
-                $_SESSION['id_user'] = $response[1];
-                $_SESSION['login'] = 1;
-                echo "<script>alert('Login success');</script>";
-                // echo "<script>alert('id_user: ". $_SESSION['id_user'] ."');</script>";
-                echo "<script>window.location.href = 'index.php';</script>";
+            if ($response[0] == "17") {
+                $_SESSION['num_user'] = $response[1];
+                $_SESSION["position"] = 1;
+                $_SESSION['user_list'] = '';
+
             } else {
-                echo "<script>alert('Login fail');</script>";
+                echo "<script>alert('Loading fail');</script>";
             }
-            socket_close($socket);
-        }
+            while ($_SESSION['position'] <= $_SESSION['num_user']) {
+                $msg = "06|" . $_SESSION["position"] . "|";
+                $ret = socket_write($socket, $msg, strlen($msg));
+                if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
 
-        function logout() {
-            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
+                // receive response from server
+                $response = socket_read($socket, 1024);
+                if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+                //echo $response;
 
-            // connect to server
-            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
+                // split response from server
+                $response = explode("|", $response);
 
-            $msg = "02|" . $_SESSION['username'] . "|";
-
-            $ret = socket_write($socket, $msg, strlen($msg));
-            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-            // receive response from server
-            $response = socket_read($socket, 1024);
-            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-
-            $response = explode("|", $response);
-
-            if ($response[0] == "9") {
-                $_SESSION['username'] = '';
-                $_SESSION['id_user'] = 0;
-                $_SESSION['login'] = 0;
-                $_SESSION['friend_list'] = '';
-                echo "<script>alert('Log out success');</script>";
-                echo "<script>window.location.href = 'index.php';</script>";
-            } else {
-                echo "<script>alert('Logout fail');</script>";
-            }
-            socket_close($socket);
-        }
-
-        function register() {
-            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
-
-            // connect to server
-            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
-
-            $msg = "01|" . $_POST['username'] . "|" . $_POST['password'] . "|";
-
-            $ret = socket_write($socket, $msg, strlen($msg));
-            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-            // receive response from server
-            $response = socket_read($socket, 1024);
-            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-
-            $response = explode("|", $response);
-
-            if ($response[0] == "11") {
-                echo "<script>alert('Register success');</script>";
-                // echo "<script>alert('id_user: ". $_SESSION['id_user'] ."');</script>";
-                echo "<script>window.location.href = 'login.php';</script>";
-            } else {
-                echo "<script>alert('Register fail');</script>";
+                if ($response[0] == "18") {
+                   
+                    $_SESSION['user_list'] .= "<option value=\"" . $response[1] ."\">" . $response[2] . "</option>";
+                    
+                } else {
+                    echo "<script>alert('Friend loading fail');</script>";
+                }
+                $_SESSION["position"] += 1;
             }
             socket_close($socket);
         }
@@ -383,7 +383,8 @@
                 $response = explode("|", $response);
 
                 if ($response[0] == "18") {
-                   $p->set_share_by($response[2]);
+                    $p->set_share_by_id($response[1]);
+                    $p->set_share_by($response[2]);
                 } else {
                     echo "<script>alert('Friend loading fail');</script>";
                 }
@@ -443,6 +444,33 @@
                 } else {
                     echo "<script>alert('Friend loading fail');</script>";
                 }
+            }
+            socket_close($socket);
+        }
+
+        function addPlace() {
+
+        }
+
+        function deletePlace($msg) {
+            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
+
+            // connect to server
+            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
+
+            $ret = socket_write($socket, $msg, strlen($msg));
+            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            // receive response from server
+            $response = socket_read($socket, 1024);
+            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            $response = explode("|", $response);
+
+            if ($response[0] == "26") {
+                echo "<script>alert('Delete success');</script>";
+            } else {
+                echo "<script>alert('Delete fail');</script>";
             }
             socket_close($socket);
         }

@@ -21,7 +21,15 @@
         include("navbar.php");
         include("request.php");
         $request = new Request();
+        
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
+            if(isset($_GET['shared_by_id']) && isset($_GET['id_place'])) {
+                $msg = "11|" . "3" . "|" . $_SESSION['id_user'] . "|" . $_GET['shared_by_id'] . "|" . $_GET['id_place'] ."|";
+                $request->deletePlace($msg);
+            } else if (isset($_GET['id_place'])) {
+                $msg = "11|" . "2" . "|" . $_SESSION['id_user'] . "|" . $_GET['id_place'] ."|";
+                $request->deletePlace($msg);
+            }
             $request->getFavouriteList();
             $request->getListSharedPlaces();
         }
@@ -57,6 +65,11 @@
                                                         " . $_SESSION['favorite_place_list'][$i]->get_type() . "
                                                 </div>
                                             </div>
+                                             <div class=\"card-footer p-4 pt-0 border-top-0 bg-transparent\">
+                                                <div class=\"text-center\">
+                                                    <a class=\"btn btn-outline-dark mt-auto\" href=\"myFavor.php?id_place=".  $_SESSION['favorite_place_list'][$i]->get_id() ."\">Delete</a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                             ");
@@ -86,6 +99,11 @@
                                                     <h5 class=\"fw-bolder\">" . $_SESSION['place_list_shared'][$i]->get_name() . "</h5>
                                                         " . $_SESSION['place_list_shared'][$i]->get_type() . "
                                                     <h5 class=\"fw-bolder\"> Được chia sẻ từ: " . $_SESSION['place_list_shared'][$i]->get_share_by() . "</h5>
+                                                </div>
+                                            </div>
+                                            <div class=\"card-footer p-4 pt-0 border-top-0 bg-transparent\">
+                                                <div class=\"text-center\">
+                                                    <a class=\"btn btn-outline-dark mt-auto\" href=\"myFavor.php?shared_by_id=". $_SESSION['place_list_shared'][$i]->get_share_by_id() . "&id_place=".  $_SESSION['place_list_shared'][$i]->get_id() ."\">Delete</a>
                                                 </div>
                                             </div>
                                         </div>
