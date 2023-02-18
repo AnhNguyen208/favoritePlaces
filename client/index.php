@@ -13,9 +13,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
-        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.2/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 </head>
 
 <body>
@@ -114,17 +113,17 @@
                                     </div>
                                     <div class=\"card-footer p-4 pt-0 border-top-0 bg-transparent\">
                                         <div class=\"text-center\">
-                                            <a class=\"btn btn-outline-dark mt-auto\" href=\"index.php?AddFavorite=". $_SESSION['place_list'][$i]->get_id() ."\">Favorite</a>
-                                            <button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#exampleModal".$i ."\">
+                                            <a class=\"btn btn-outline-dark mt-auto\" href=\"index.php?AddFavorite=" . $_SESSION['place_list'][$i]->get_id() . "\">Favorite</a>
+                                            <button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#exampleModal" . $i . "\">
                                                 Share
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                <div class=\"modal fade\" id=\"exampleModal". $i ."\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\"
+                                <div class=\"modal fade\" id=\"exampleModal" . $i . "\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\"
                                     aria-hidden=\"true\">
                                     <div class=\"modal-dialog\" role=\"document\">
-                                        <form action=\"" . $_SERVER['PHP_SELF']. "\" method=\"post\">
+                                        <form action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\">
                                             <div class=\"modal-content\">
                                                 <div class=\"modal-header\">
                                                     <h5 class=\"modal-title\" id=\"exampleModalLabel\">Modal title</h5>
@@ -137,7 +136,7 @@
                                                 </div>
                                                 <div class=\"modal-footer\">
                                                     <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button>
-                                                    <a class=\"btn btn-primary\" href=\"index.php?share=". $i ."\">Share</a>
+                                                    <a class=\"btn btn-primary\" href=\"index.php?share=" . $i . "\">Share</a>
                                                 </div>
                                             </div>
                                         </form>
@@ -147,8 +146,8 @@
                     ");
                 }
 
-                if(isset($_GET['AddFavorite'])) {
-                    if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
+                if (isset($_GET['AddFavorite'])) {
+                    if (isset($_SESSION['login']) && ($_SESSION['login'] == 1)) {
                         //echo "<script>alert('Add favorite: ". $_GET['AddFavorite'] ."');</script>";
                         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
 
@@ -172,15 +171,14 @@
                             echo "<script>alert('Add fail');</script>";
                         }
                         socket_close($socket);
-                    }
-                    else {
+                    } else {
                         echo "<script>alert('You have to log in first');</script>";
                         echo "<script>window.location.href = 'login.php';</script>";
                     }
                 }
 
-                if(isset($_GET['share'])) {
-                    echo "<script>alert('Place share = ". $_GET['share'] ."');</script>";
+                if (isset($_GET['share'])) {
+                    echo "<script>alert('Place share = " . $_GET['share'] . "');</script>";
                 }
                 ?>
             </div>
@@ -198,14 +196,11 @@
     <!-- Core theme JS-->
     <script src="js/scripts.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
-        integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous">
     </script>
 </body>
 
