@@ -12,7 +12,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define PORT 8888
+#define PORT 1111
 #define BACKLOG 20
 #define BUFF_SIZE 1024
 
