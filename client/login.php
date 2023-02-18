@@ -30,6 +30,7 @@
 <body>
     <?php
         session_start();
+        include("request.php");
     ?>
     <!-- Top content -->
     <div class="top-content">
@@ -79,34 +80,9 @@
     </div>
     <?php
         if(isset($_POST['username']) && isset($_POST['password'])) {
-
-            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
-
-            // connect to server
-            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
-
-            $msg = "00|" . $_POST['username'] . "|" . $_POST['password'] . "|";
-
-            $ret = socket_write($socket, $msg, strlen($msg));
-            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-            // receive response from server
-            $response = socket_read($socket, 1024);
-            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-
-            $response = explode("|", $response);
-
-            if ($response[0] == "8") {
-                $_SESSION['username'] = $_POST['username'];
-                $_SESSION['id_user'] = $response[1];
-                $_SESSION['login'] = 1;
-                echo "<script>alert('Login success');</script>";
-                // echo "<script>alert('id_user: ". $_SESSION['id_user'] ."');</script>";
-                echo "<script>window.location.href = 'index.php';</script>";
-            } else {
-                echo "<script>alert('Login fail');</script>";
-            }
-            socket_close($socket);
+            $request = new Request();
+            $request->login();
+            
         }
     ?>
     <!-- Javascript -->

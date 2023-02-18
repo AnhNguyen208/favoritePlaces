@@ -31,36 +31,6 @@
                     }
                 ?>
             </form>
-            <?php
-                if(isset($_POST['logout'])) {
-                    $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
-
-                    // connect to server
-                    $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
-
-                    $msg = "02|" . $_SESSION['username'] . "|";
-
-                    $ret = socket_write($socket, $msg, strlen($msg));
-                    if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-                    // receive response from server
-                    $response = socket_read($socket, 1024);
-                    if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-
-                    $response = explode("|", $response);
-
-                    if ($response[0] == "9") {
-                        $_SESSION['username'] = '';
-                        $_SESSION['id_user'] = 0;
-                        $_SESSION['login'] = 0;
-                        echo "<script>alert('Log out success');</script>";
-                        echo "<script>window.location.href = 'index.php';</script>";
-                    } else {
-                        echo "<script>alert('Logout fail');</script>";
-                    }
-                    socket_close($socket);
-                }
-            ?>
         </div>
     </div>
 </nav>

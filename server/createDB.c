@@ -79,7 +79,7 @@ int main(int argc, char const* argv[])
     mysql_close(con);
     exit(1);
   }
-  printf("%s\n", "Inser database succesfully ...");
+  printf("%s\n", "Insert database succesfully ...");
 
   // ****CREATE PLACE TABLE****
   if (mysql_query(con, "DROP TABLE IF EXISTS places"))
@@ -118,13 +118,38 @@ int main(int argc, char const* argv[])
     mysql_close(con);
     exit(1);
   }
-  if (mysql_query(con, "CREATE TABLE favoriteplaces (`id` INT NOT NULL AUTO_INCREMENT, is_user INT NULL, shared_by_id INT NULL, id_place INT NULL, PRIMARY KEY(`id`));"))
+  if (mysql_query(con, "CREATE TABLE favoriteplaces (`id` INT NOT NULL AUTO_INCREMENT, is_user INT NULL, shared_by_id INT NULL, id_place INT NULL, status INT, PRIMARY KEY(`id`));"))
   {
     fprintf(stderr, "%s\n", mysql_error(con));
     mysql_close(con);
     exit(1);
   }
   printf("%s\n", "Create table favoriteplaces succesfully ...");
+
+  // ****CREATE FRIEND TABLE****
+  if (mysql_query(con, "DROP TABLE IF EXISTS friends"))
+  {
+    fprintf(stderr, "%s\n", mysql_error(con));
+    mysql_close(con);
+    exit(1);
+  }
+  if (mysql_query(con, "CREATE TABLE friends (`id` INT NOT NULL AUTO_INCREMENT, user1 INT, user2 INT, status INT, PRIMARY KEY(`id`));"))
+  {
+    fprintf(stderr, "%s\n", mysql_error(con));
+    mysql_close(con);
+    exit(1);
+  }
+  printf("%s\n", "Create table friends succesfully ...");
+
+  if (mysql_query(con, "INSERT INTO friends (user1, user2, status) "
+    "VALUES (1, 2, 1),"
+    "(2, 1, 1);"))
+  {
+    fprintf(stderr, "%s\n", mysql_error(con));
+    mysql_close(con);
+    exit(1);
+  }
+  printf("%s\n", "Insert database succesfully ...");
 
   mysql_close(con);
   exit(0);

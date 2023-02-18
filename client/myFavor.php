@@ -18,68 +18,20 @@
 <body>
     <?php
         session_start();
-        include("place.php");
         include("navbar.php");
+        include("request.php");
+        $request = new Request();
+        
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
-            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
-
-            // connect to server
-            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
-
-            $msg = "04|" . $_SESSION['id_user'] . "|" . "0|";
-
-            $ret = socket_write($socket, $msg, strlen($msg));
-            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-            // receive response from server
-            $response = socket_read($socket, 1024);
-            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-
-            //echo json_encode($response);
-
-            $response = explode("|", $response);
-
-            if ($response[0] == "15") {
-                $_SESSION['num_favorite_places'] = $response[1];
-                $_SESSION['position_favorite_place'] = array();
-                for ($i = 0; $i < $_SESSION['num_favorite_places']; $i++) {
-                    array_push($_SESSION['position_favorite_place'], $response[$i+2]);
-                }
-                $_SESSION['favorite_place_list'] = array();
-
-                // echo json_encode($response);
-            } else {
-                echo "<script>alert('Loading fail');</script>";
+            if(isset($_GET['shared_by_id']) && isset($_GET['id_place'])) {
+                $msg = "11|" . "3" . "|" . $_SESSION['id_user'] . "|" . $_GET['shared_by_id'] . "|" . $_GET['id_place'] ."|";
+                $request->deletePlace($msg);
+            } else if (isset($_GET['id_place'])) {
+                $msg = "11|" . "2" . "|" . $_SESSION['id_user'] . "|" . $_GET['id_place'] ."|";
+                $request->deletePlace($msg);
             }
-
-            foreach ($_SESSION['position_favorite_place'] as $position) {
-                $msg = "03|" . $position . "|";
-
-                $ret = socket_write($socket, $msg, strlen($msg));
-                if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-                // receive response from server
-                $response = socket_read($socket, 1024);
-                if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-                //echo $response;
-
-                // split response from server
-                $response = explode("|", $response);
-
-                if ($response[0] == "2") {
-                    $p = new Place();
-                    $p->set_id($response[1]);
-                    $p->set_name($response[2]);
-                    $p->set_type($response[3]);
-                    $p->set_image($response[4]);
-                    $p->set_description($response[5]);
-                } else {
-                    echo "<script>alert('Places loading fail');</script>";
-                    echo "<script>window.location.href = 'test.php';</script>";
-                }
-                array_push($_SESSION['favorite_place_list'], $p);
-            }
-            socket_close($socket);
+            $request->getFavouriteList();
+            $request->getListSharedPlaces();
         }
         else {
             echo "<script>alert('You have to log in first');</script>";
@@ -98,8 +50,9 @@
     <!-- Section-->
     <section class="py-5">
         <div class="container px-4 px-lg-5 mt-5">
+            <h1 class="text-center"> Danh sách địa điểm yêu thích của bạn</h1>
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                <?php
+            <?php
                 if (isset($_SESSION['num_favorite_places'])) {
                     $total = $_SESSION['num_favorite_places'];
                     for ($i = 0; $i < $total; $i++) {
@@ -112,9 +65,9 @@
                                                         " . $_SESSION['favorite_place_list'][$i]->get_type() . "
                                                 </div>
                                             </div>
-                                            <div class=\"card-footer p-4 pt-0 border-top-0 bg-transparent\">
+                                             <div class=\"card-footer p-4 pt-0 border-top-0 bg-transparent\">
                                                 <div class=\"text-center\">
-                                                    <a class=\"btn btn-outline-dark mt-auto\" href=\"#\">Share</a>
+                                                    <a class=\"btn btn-outline-dark mt-auto\" href=\"myFavor.php?id_place=".  $_SESSION['favorite_place_list'][$i]->get_id() ."\">Delete</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -125,6 +78,41 @@
                     $total = 0;
                 }
 
+                if(isset($_POST['logout'])) {
+                    $request->logout();
+                }
+            ?>
+            </div>
+        </div>
+        <div class="container px-4 px-lg-5 mt-5">
+            <h1 class="text-center"> Danh sách địa điểm yêu thích được chia sẻ</h1>
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            <?php
+                if (isset($_SESSION['num_shared_places'])) {
+                    $total = $_SESSION['num_shared_places'];
+                    for ($i = 0; $i < $total; $i++) {
+                    echo ("<div class=\"col mb-5\">
+                                    <div class=\"card h-100\">
+                                        <img class=\"card-img-top\" src=\"" . $_SESSION['place_list_shared'][$i]->get_image() . "\" alt=\"" .  $_SESSION['place_list_shared'][$i]->get_image() . "\" />
+                                            <div class=\"card-body p-4\">
+                                                <div class=\"text-center\">
+                                                    <h5 class=\"fw-bolder\">" . $_SESSION['place_list_shared'][$i]->get_name() . "</h5>
+                                                        " . $_SESSION['place_list_shared'][$i]->get_type() . "
+                                                    <h5 class=\"fw-bolder\"> Được chia sẻ từ: " . $_SESSION['place_list_shared'][$i]->get_share_by() . "</h5>
+                                                </div>
+                                            </div>
+                                            <div class=\"card-footer p-4 pt-0 border-top-0 bg-transparent\">
+                                                <div class=\"text-center\">
+                                                    <a class=\"btn btn-outline-dark mt-auto\" href=\"myFavor.php?shared_by_id=". $_SESSION['place_list_shared'][$i]->get_share_by_id() . "&id_place=".  $_SESSION['place_list_shared'][$i]->get_id() ."\">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            ");
+                    }
+                } else {
+                    $total = 0;
+                }
             ?>
             </div>
         </div>

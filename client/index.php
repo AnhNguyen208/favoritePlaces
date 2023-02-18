@@ -19,68 +19,21 @@
 
 <body>
     <?php
-    session_start();
-    include("place.php");
-    include("navbar.php");
-    $host = "127.0.0.1";
-    $port = 8888;
-    $_SESSION['host_server'] = $host;
-    $_SESSION['port'] = $port;
+        session_start();
+        include("navbar.php");
+        include("request.php");
+        $host = "127.0.0.1";
+        $port = 1111;
+        $_SESSION['host_server'] = $host;
+        $_SESSION['port'] = $port;
 
-    $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
-
-    // connect to server
-    $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
-
-    $msg = "03|" . "0" . "|";
-
-    $ret = socket_write($socket, $msg, strlen($msg));
-    if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-    // receive response from server
-    $response = socket_read($socket, 1024);
-    if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-
-    $response = explode("|", $response);
-
-    if ($response[0] == "1") {
-        $_SESSION['num_places'] = $response[1];
-        $_SESSION["position"] = 1;
-        $_SESSION['place_list'] = array();
-
-        //echo $_SESSION['num_places'];
-    } else {
-        echo "<script>alert('Loading fail');</script>";
-    }
-    while ($_SESSION['position'] <= $_SESSION['num_places']) {
-        $msg = "03|" . $_SESSION["position"] . "|";
-
-        $ret = socket_write($socket, $msg, strlen($msg));
-        if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-        // receive response from server
-        $response = socket_read($socket, 1024);
-        if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-        //echo $response;
-
-        // split response from server
-        $response = explode("|", $response);
-
-        if ($response[0] == "2") {
-            $p = new Place();
-            $p->set_id($response[1]);
-            $p->set_name($response[2]);
-            $p->set_type($response[3]);
-            $p->set_image($response[4]);
-            $p->set_description($response[5]);
-        } else {
-            echo "<script>alert('Places loading fail');</script>";
-            echo "<script>window.location.href = 'test.php';</script>";
+        $request = new Request();
+        $request->getPlaceList();
+        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+            $request->getFriendList();
+            // echo $_SESSION['friend_list'];
         }
-        $_SESSION["place_list"][$_SESSION["position"]] = $p;
-        $_SESSION["position"] += 1;
-    }
-    socket_close($socket);
+
     ?>
     <!-- Header-->
     <header class="bg-dark py-5">
@@ -101,6 +54,13 @@
                 } else {
                     $total = 0;
                 }
+                if(isset($_SESSION['friend_list'])) {
+                    $friend = $_SESSION['friend_list'];
+                }
+                else {
+                    $friend = "";
+                }
+
                 for ($i = 1; $i <= $total; $i++) {
                     echo (" <div class=\"col mb-5\">
                                 <div class=\"card h-100\">
@@ -123,7 +83,8 @@
                                 <div class=\"modal fade\" id=\"exampleModal" . $i . "\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\"
                                     aria-hidden=\"true\">
                                     <div class=\"modal-dialog\" role=\"document\">
-                                        <form action=\"" . $_SERVER['PHP_SELF'] . "\" method=\"post\">
+                                        <form action=\"" . $_SERVER['PHP_SELF']. "\" method=\"post\">
+                                            <input type=\"hidden\" name=\"id_place\" value=\"" . $i . "\">
                                             <div class=\"modal-content\">
                                                 <div class=\"modal-header\">
                                                     <h5 class=\"modal-title\" id=\"exampleModalLabel\">Modal title</h5>
@@ -132,11 +93,14 @@
                                                     </button>
                                                 </div>
                                                 <div class=\"modal-body\">
-                                                    This is a modal. Edit it however you want.
+                                                    <label for=\"friend\">Choose a friend:</label>
+                                                    <select name=\"friend\" id=\"friend\">
+                                                    " . $friend . "
+                                                    </select>
                                                 </div>
                                                 <div class=\"modal-footer\">
                                                     <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button>
-                                                    <a class=\"btn btn-primary\" href=\"index.php?share=" . $i . "\">Share</a>
+                                                    <input class=\"btn btn-primary\" type=\"submit\" value=\"Share\">
                                                 </div>
                                             </div>
                                         </form>
@@ -149,36 +113,21 @@
                 if (isset($_GET['AddFavorite'])) {
                     if (isset($_SESSION['login']) && ($_SESSION['login'] == 1)) {
                         //echo "<script>alert('Add favorite: ". $_GET['AddFavorite'] ."');</script>";
-                        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
-
-                        // connect to server
-                        $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
-
-                        $msg = "05|" . $_SESSION['id_user'] . "|" . $_GET['AddFavorite'] . "|";
-
-                        $ret = socket_write($socket, $msg, strlen($msg));
-                        if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-                        // receive response from server
-                        $response = socket_read($socket, 1024);
-                        if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-
-                        $response = explode("|", $response);
-
-                        if ($response[0] == "13") {
-                            echo "<script>alert('Add success');</script>";
-                        } else {
-                            echo "<script>alert('Add fail');</script>";
-                        }
-                        socket_close($socket);
-                    } else {
+                       $request->add_favorite_place();
+                    }
+                    else {
                         echo "<script>alert('You have to log in first');</script>";
                         echo "<script>window.location.href = 'login.php';</script>";
                     }
                 }
 
-                if (isset($_GET['share'])) {
-                    echo "<script>alert('Place share = " . $_GET['share'] . "');</script>";
+                if( isset($_POST['friend']) && isset($_POST['id_place'])) {
+                    $request->sharePlace();
+                    // echo "<script>alert('share to ". $_POST['friend'] ." place " . $_POST['id_place'] . "');</script>";
+                }
+
+                if(isset($_POST['logout'])) {
+                    $request->logout();
                 }
                 ?>
             </div>
