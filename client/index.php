@@ -74,7 +74,7 @@
                                     <div class=\"card-footer p-4 pt-0 border-top-0 bg-transparent\">
                                         <div class=\"text-center\">
                                             <a class=\"btn btn-outline-dark mt-auto\" href=\"index.php?AddFavorite=" . $_SESSION['place_list'][$i]->get_id() . "\">Favorite</a>
-                                            <button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#exampleModal" . $i . "\">
+                                            <button type=\"button\" class=\"btn btn-outline-dark mt-auto\" data-toggle=\"modal\" data-target=\"#exampleModal" . $i . "\">
                                                 Share
                                             </button>
                                         </div>
@@ -137,7 +137,7 @@
     <!-- Footer-->
     <footer class="py-5 bg-dark">
         <div class="container">
-            <p class="m-0 text-center text-white">Copyright &copy; Your Website 2022</p>
+            <p class="m-0 text-center text-white">Copyright &copy; PlaSha 2023</p>
         </div>
     </footer>
     <!-- Bootstrap core JS-->

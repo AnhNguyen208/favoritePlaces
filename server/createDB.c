@@ -99,11 +99,18 @@ int main(int argc, char const* argv[])
   printf("%s\n", "Create table places succesfully ...");
 
   if (mysql_query(con, "INSERT INTO places (name, type, image, description) "
-    "VALUES ('name1', 'type1', 'assets/image/image1.jpg', 'description1'),"
-    "('name2', 'type2', 'assets/image/image2.jpg', 'description2'),"
-    "('name3', 'type3', 'assets/image/image3.jpg', 'description3'),"
-    "('name4', 'type4', 'assets/image/image4.jpg', 'description4'),"
-    "('name5', 'type5', 'assets/image/image5.jpg', 'description5');"))
+    "VALUES ('Hanoi Museum', 'museum', 'assets/image/museum1.jpg', 'description1'),"
+    "('Hoa Lo Prison Museum', 'museum', 'assets/image/museum2.jpg', 'description2'),"
+    "('Vietnam National Fine Arts Museum', 'museum', 'assets/image/museum3.jpg', 'description3'),"
+    "('La Maison 1888', 'restaurant', 'assets/image/restaurant1.jpg', 'description4'),"
+    "('L’Escale', 'restaurant', 'assets/image/restaurant2.jpg', 'description5'),"
+    "('Jardin Des Sens', 'restaurant', 'assets/image/restaurant3.jpg', 'description6'),"
+    "('La Terrasse', 'coffee shop', 'assets/image/coffeeShop1.jpg', 'description7'),"
+    "('An Garden Cafe', 'coffee shop', 'assets/image/coffeeShop2.jpg', 'description8'),"
+    "('Xofa Café & Bistro', 'coffee shop', 'assets/image/coffeeShop3.jpg', 'description9'),"
+    "('Nê.Cocktailbar', 'pub', 'assets/image/pub1.jpg', 'description10'),"
+    "('The Haflington ', 'pub', 'assets/image/pub2.jpg', 'description11'),"
+    "('The Den Bar', 'pub', 'assets/image/pub3.jpg', 'description12');"))
   {
     fprintf(stderr, "%s\n", mysql_error(con));
     mysql_close(con);

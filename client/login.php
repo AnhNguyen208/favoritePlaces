@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/form-elements.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -29,8 +29,8 @@
 
 <body>
     <?php
-        session_start();
-        include("request.php");
+    session_start();
+    include("request.php");
     ?>
     <!-- Top content -->
     <div class="top-content">
@@ -58,20 +58,19 @@
                             </div>
                         </div>
                         <div class="form-bottom">
-                            <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post"
-                                class="login-form">
+                            <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="login-form">
                                 <div class="form-group">
                                     <label class="sr-only" for="username">Username</label>
-                                    <input type="text" name="username" placeholder="Username..."
-                                        class="form-username form-control" id="username">
+                                    <input type="text" name="username" placeholder="Username..." class="form-username form-control" id="username">
                                 </div>
                                 <div class="form-group">
                                     <label class="sr-only" for="password">Password</label>
-                                    <input type="password" name="password" placeholder="Password..."
-                                        class="form-password form-control" id="password">
+                                    <input type="password" name="password" placeholder="Password..." class="form-password form-control" id="password">
                                 </div>
                                 <button type="submit" class="btn">Sign in!</button>
+
                             </form>
+                            <a href="register.php"><button class="btn" style="margin-top: 10px;width: 100%;">Create account</button></a>
                         </div>
                     </div>
                 </div>
@@ -79,18 +78,17 @@
         </div>
     </div>
     <?php
-        if(isset($_POST['username']) && isset($_POST['password'])) {
-            $request = new Request();
-            $request->login();
-            
-        }
+    if (isset($_POST['username']) && isset($_POST['password'])) {
+        $request = new Request();
+        $request->login();
+    }
     ?>
     <!-- Javascript -->
     <script src="login_form/assets/js/jquery-1.11.1.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="login_form/assets/js/jquery.backstretch.min.js"></script>
     <script src="login_form/assets/js/scripts.js"></script>
-    
+
     <!--[if lt IE 10]>
             <script src="assets/js/placeholder.js"></script>
         <![endif]-->

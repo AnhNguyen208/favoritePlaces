@@ -76,8 +76,9 @@
                                     <input type="password" name="password1" placeholder="Password again..."
                                         class="form-password form-control" id="form-password">
                                 </div>
-                                <button type="submit" class="btn">Sign up!</button>
+                                <button type="submit" class="btn">Sign up</button>
                             </form>
+                            <a href="login.php"><button class="btn" style="margin-top: 10px;width: 100%;">Already have an account?</button></a>
                         </div>
                     </div>
                 </div>
@@ -88,14 +89,14 @@
             if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['password1'])) {
                 if ($_POST['password'] != $_POST['password1']) {
                     echo "<script>alert('Input password again');</script>";
-                } 
+                }
                 else {
                     $request = new Request();
                     $request->register();
                 }
 
 
-                
+
             }
         ?>
     <!-- Javascript -->

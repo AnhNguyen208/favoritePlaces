@@ -98,7 +98,8 @@
                                                 <div class=\"text-center\">
                                                     <h5 class=\"fw-bolder\">" . $_SESSION['place_list_shared'][$i]->get_name() . "</h5>
                                                         " . $_SESSION['place_list_shared'][$i]->get_type() . "
-                                                    <h5 class=\"fw-bolder\"> Được chia sẻ từ: " . $_SESSION['place_list_shared'][$i]->get_share_by() . "</h5>
+                                                    <h5 class=\"fw-bolder\"> Shared By: " . "</h5>
+                                                        ". $_SESSION['place_list_shared'][$i]->get_share_by()."
                                                 </div>
                                             </div>
                                             <div class=\"card-footer p-4 pt-0 border-top-0 bg-transparent\">
@@ -120,7 +121,7 @@
     <!-- Footer-->
     <footer class="py-5 bg-dark">
         <div class="container">
-            <p class="m-0 text-center text-white">Copyright &copy; Your Website 2022</p>
+            <p class="m-0 text-center text-white">Copyright &copy; PlaSha 2023</p>
         </div>
     </footer>
     <!-- Bootstrap core JS-->
