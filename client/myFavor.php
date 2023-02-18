@@ -32,10 +32,16 @@
             }
             $request->getFavouriteList();
             $request->getListSharedPlaces();
+            
         }
         else {
             echo "<script>alert('You have to log in first');</script>";
             echo "<script>window.location.href = 'login.php';</script>";
+        }
+
+        if(isset($_POST['logout'])) {
+            $request->logout();
+            echo "<script>window.location.href = 'index.php';</script>";
         }
     ?>
     <!-- Header-->
@@ -78,9 +84,7 @@
                     $total = 0;
                 }
 
-                if(isset($_POST['logout'])) {
-                    $request->logout();
-                }
+                
             ?>
             </div>
         </div>

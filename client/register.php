@@ -94,9 +94,6 @@
                     $request = new Request();
                     $request->register();
                 }
-
-
-
             }
         ?>
     <!-- Javascript -->

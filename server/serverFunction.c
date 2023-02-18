@@ -87,11 +87,36 @@ void handle_message(char* message, int socket) {
     }
     case ADD_PLACE: {
         printf("Add place\n");
-        showListFriend(message, socket);
+        addPlace(message, socket);
         break;
     }
     case DELETE_FAVORITE_PLACE: {
         printf("Delete favorite place\n");
+        deleteFavoritePlace(message, socket);
+        break;
+    }
+    case SHOW_LIST_FRIEND_REQUEST: {
+        printf("Show list friend request\n");
+        showListFriendRequest(message, socket);
+        break;
+    }
+    case ADD_FRIEND: {
+        printf("Add friend\n");
+        deleteFavoritePlace(message, socket);
+        break;
+    }
+    case ACCEPT_FRIEND: {
+        printf("Accept request add friend\n");
+        deleteFavoritePlace(message, socket);
+        break;
+    }
+    case DENY_FRIEND: {
+        printf("Deny request add friend\n");
+        deleteFavoritePlace(message, socket);
+        break;
+    }
+    case REMOVE_FRIEND: {
+        printf("Remove friend\n");
         deleteFavoritePlace(message, socket);
         break;
     }
@@ -588,6 +613,10 @@ void showListFriend(char* message, int socket) {
     return;
 }
 
+void addPlace(char * message, int socket) {
+    
+}
+
 void deleteFavoritePlace(char* message, int socket) {
     printf("Start delete favorite place\n");
     char number[BUFF_SIZE];
@@ -632,6 +661,64 @@ void deleteFavoritePlace(char* message, int socket) {
     send(socket, serverMess, strlen(serverMess), 0);
     printf("Server message: %s\n", serverMess);
     return;
+}
+
+void showListFriendRequest(char* message, int socket) {
+    printf("Start send list shared places\n");
+    int id_user;
+    char temp[BUFF_SIZE];
+    char temp1[BUFF_SIZE];
+    char temp2[50] = "\0";
+    char serverMess[BUFF_SIZE] = "\0";
+    char query[200] = "\0";
+    char* token;
+
+    // Get position
+    printf("%s\n", message);
+    token = strtok(message, "|");
+    token = strtok(NULL, "|");
+    strcpy(temp, token);
+    id_user = atoi(temp);
+    printf("ID user: %d\n", id_user);
+    // Get position to choose appropriate question
+    sprintf(query, "SELECT * FROM friends WHERE user1 = %d AND status = 0", id_user);
+    printf("%s\n", query);
+    if (mysql_query(con, query)) {
+        sprintf(serverMess, "%d|%s\n", QUERY_FAIL, mysql_error(con));
+        send(socket, serverMess, strlen(serverMess), 0);
+        return;
+    }
+    MYSQL_RES* result = mysql_store_result(con);
+    if (result == NULL) {
+        finish_with_error(con);
+    }
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(result)))
+    {
+        strcat(temp2, row[2]);
+        strcat(temp2, "|");
+    }
+    sprintf(serverMess, "%d|%lld|%s\n", NUM_FRIEND_REQUESTS, mysql_num_rows(result), temp2);
+    printf("Server message: %s\n", serverMess);
+
+    send(socket, serverMess, strlen(serverMess), 0);
+    return;
+}
+
+void addFriend(char* message, int socket) {
+    
+}
+
+void acceptFriend(char* message, int socket) {
+    
+}
+
+void denyFriend(char* message, int socket) {
+    
+}
+
+void removeFriend(char* message, int socket) {
+    
 }
 
 void encryptPassword(char* password) {
