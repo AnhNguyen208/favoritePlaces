@@ -21,7 +21,7 @@
         include("navbar.php");
         include("request.php");
         $request = new Request();
-        
+
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
             if(isset($_GET['shared_by_id']) && isset($_GET['id_place'])) {
                 $msg = "11|" . "3" . "|" . $_SESSION['id_user'] . "|" . $_GET['shared_by_id'] . "|" . $_GET['id_place'] ."|";
@@ -50,7 +50,7 @@
     <!-- Section-->
     <section class="py-5">
         <div class="container px-4 px-lg-5 mt-5">
-            <h1 class="text-center"> Danh sách địa điểm yêu thích của bạn</h1>
+            <h1 class="text-center"> Your Favorite Places List</h1>
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <?php
                 if (isset($_SESSION['num_favorite_places'])) {
@@ -85,7 +85,7 @@
             </div>
         </div>
         <div class="container px-4 px-lg-5 mt-5">
-            <h1 class="text-center"> Danh sách địa điểm yêu thích được chia sẻ</h1>
+            <h1 class="text-center"> Your Shared Places List</h1>
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <?php
                 if (isset($_SESSION['num_shared_places'])) {
