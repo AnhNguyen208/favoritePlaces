@@ -207,13 +207,12 @@
             socket_close($socket);
         }
 
-        function add_favorite_place() {
+        function addFavoritePlace($msg) {
             $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
 
             // connect to server
             $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
 
-            $msg = "05|" . $_SESSION['id_user'] . "|" . $_GET['AddFavorite'] . "|";
 
             $ret = socket_write($socket, $msg, strlen($msg));
             if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
@@ -469,7 +468,7 @@
 
         }
 
-        function deletePlace($msg) {
+        function deleteFavorPlace($msg) {
             $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
 
             // connect to server
@@ -545,6 +544,29 @@
 
                 array_push($_SESSION['friend_request'], $u);
 
+            }
+            socket_close($socket);
+        }
+
+        function crudFriend($msg) {
+            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
+
+            // connect to server
+            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
+
+            $ret = socket_write($socket, $msg, strlen($msg));
+            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            // receive response from server
+            $response = socket_read($socket, 1024);
+            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            $response = explode("|", $response);
+
+            if ($response[0] == "29") {
+                echo "<script>alert('Success');</script>";
+            } else {
+                echo "<script>alert('Failed');</script>";
             }
             socket_close($socket);
         }

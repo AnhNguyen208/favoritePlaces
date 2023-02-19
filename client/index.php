@@ -116,7 +116,8 @@
                 }
                 if (isset($_GET['AddFavorite'])) {
                     if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
-                        $request->add_favorite_place();
+                        $msg = "05|" . $_SESSION['id_user'] . "|" . $_GET['AddFavorite'] . "|";
+                        $request->addFavoritePlace($msg);
                     }       
                     else {
                         echo "<script>alert('You have to log in first');</script>";

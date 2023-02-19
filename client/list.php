@@ -62,8 +62,66 @@
     session_start();
     include("navbar.php"); 
     include("request.php");
+    
+    $request = new Request();
+
+    if(isset($_POST['logout'])) {
+        $request->logout();
+        echo "<script>window.location.href = 'index.php';</script>";
+    }
+
+    if(isset($_GET['accept_friend'])) {
+        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+            $msg = "14|" . $_GET['accept_friend'] . "|" . $_SESSION['id_user'] . "|";
+            $request->crudFriend($msg);
+            // $request->acceptFriendRequest($msg);
+        }
+        else {
+            echo "<script>alert('You have to log in first');</script>";
+            echo "<script>window.location.href = 'login.php';</script>";
+        }
+    }
+
+    if(isset($_GET['deny_friend'])) {
+        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+            $msg = "15|" . $_GET['deny_friend'] . "|" . $_SESSION['id_user'] . "|";
+            $request->crudFriend($msg);
+
+            // $request->denyFriendRequest($msg);
+        }
+        else {
+            echo "<script>alert('You have to log in first');</script>";
+            echo "<script>window.location.href = 'login.php';</script>";
+        }
+    }
+
+     if(isset($_GET['remove_friend'])) {
+        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+            $msg = "16|" . $_GET['remove_friend'] . "|" . $_SESSION['id_user'] . "|";
+            $request->crudFriend($msg);
+
+            // $request->removeFriend($msg);
+        }
+        else {
+            echo "<script>alert('You have to log in first');</script>";
+            echo "<script>window.location.href = 'login.php';</script>";
+        }
+    }
+
+    if(isset($_GET['add_id_friend'])) {
+        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+            $msg = "13|" . $_SESSION['id_user'] . "|" . $_GET['add_id_friend'] . "|";
+            $request->crudFriend($msg);
+
+            // $request->addFriend($msg);
+        }
+        else {
+            echo "<script>alert('You have to log in first');</script>";
+            echo "<script>window.location.href = 'login.php';</script>";
+        }
+    }
+
     if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
-        $request = new Request();
         $request->getFriendRequest();
         $request->getFriendList();
         $request->getAllUser();
@@ -71,12 +129,6 @@
     else {
         echo "<script>alert('You have to log in first');</script>";
         echo "<script>window.location.href = 'login.php';</script>";
-    }
-
-    if(isset($_POST['logout'])) {
-        $request->logout();
-        echo "<script>window.location.href = 'index.php';</script>";
-
     }
     ?>
     <header class="bg-dark py-5">
@@ -110,8 +162,8 @@
                                 ". $friend_request->get_username() ."
                             </label>
                             <label class=\"pull-right\">
-                                <a class=\"btn btn-success btn-xs glyphicon glyphicon-ok\" href=\"#\">Accept</a>
-                                <a class=\"btn btn-danger  btn-xs glyphicon glyphicon-trash\" href=\"#\">Deny</a>
+                                <a class=\"btn btn-success btn-xs glyphicon glyphicon-ok\" href=\"list.php?accept_friend=". $friend_request->get_id_user() ."\">Accept</a>
+                                <a class=\"btn btn-danger  btn-xs glyphicon glyphicon-trash\" href=\"list.php?deny_friend=". $friend_request->get_id_user() ."\">Deny</a>
                             </label>
                             <div class=\"break\"></div>
                         </li>
@@ -140,7 +192,7 @@
                                 " . $friend->get_username() . "
                             </label>
                             <label class=\"pull-right\">
-                                <a class=\"btn btn-danger  btn-xs glyphicon glyphicon-trash\" href=\"#\">Unfriend</a>
+                                <a class=\"btn btn-danger  btn-xs glyphicon glyphicon-trash\" href=\"list.php?remove_friend=". $friend->get_id_user() ."\">Unfriend</a>
                             </label>
                             <div class=\"break\"></div>
                         </li>
@@ -168,7 +220,7 @@
                                 " . $user->get_username() . "
                             </label>
                             <label class=\"pull-right\">
-                                <a class=\"btn btn-success btn-xs glyphicon glyphicon-ok\" href=\"#\">Add friend</a>
+                                <a class=\"btn btn-success btn-xs glyphicon glyphicon-ok\" href=\"list.php?add_id_friend=". $user->get_id_user() ."\">Add friend</a>
                             </label>
                             <div class=\"break\"></div>
                         </li>
