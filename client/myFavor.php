@@ -25,17 +25,23 @@
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
             if(isset($_GET['shared_by_id']) && isset($_GET['id_place'])) {
                 $msg = "11|" . "3" . "|" . $_SESSION['id_user'] . "|" . $_GET['shared_by_id'] . "|" . $_GET['id_place'] ."|";
-                $request->deletePlace($msg);
+                $request->deleteFavorPlace($msg);
             } else if (isset($_GET['id_place'])) {
                 $msg = "11|" . "2" . "|" . $_SESSION['id_user'] . "|" . $_GET['id_place'] ."|";
-                $request->deletePlace($msg);
+                $request->deleteFavorPlace($msg);
             }
             $request->getFavouriteList();
             $request->getListSharedPlaces();
+            
         }
         else {
             echo "<script>alert('You have to log in first');</script>";
             echo "<script>window.location.href = 'login.php';</script>";
+        }
+
+        if(isset($_POST['logout'])) {
+            $request->logout();
+            echo "<script>window.location.href = 'index.php';</script>";
         }
     ?>
     <!-- Header-->
@@ -78,9 +84,7 @@
                     $total = 0;
                 }
 
-                if(isset($_POST['logout'])) {
-                    $request->logout();
-                }
+                
             ?>
             </div>
         </div>
