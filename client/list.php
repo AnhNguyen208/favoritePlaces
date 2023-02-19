@@ -60,8 +60,77 @@
 <body>
     <?php
     session_start();
-    include("place.php");
-    include("navbar.php"); ?>
+    include("navbar.php"); 
+    include("request.php");
+    
+    $request = new Request();
+
+    if(isset($_POST['logout'])) {
+        $request->logout();
+        echo "<script>window.location.href = 'index.php';</script>";
+    }
+
+    if(isset($_GET['accept_friend'])) {
+        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+            $msg = "14|" . $_GET['accept_friend'] . "|" . $_SESSION['id_user'] . "|";
+            $request->crudFriend($msg);
+            // $request->acceptFriendRequest($msg);
+        }
+        else {
+            echo "<script>alert('You have to log in first');</script>";
+            echo "<script>window.location.href = 'login.php';</script>";
+        }
+    }
+
+    if(isset($_GET['deny_friend'])) {
+        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+            $msg = "15|" . $_GET['deny_friend'] . "|" . $_SESSION['id_user'] . "|";
+            $request->crudFriend($msg);
+
+            // $request->denyFriendRequest($msg);
+        }
+        else {
+            echo "<script>alert('You have to log in first');</script>";
+            echo "<script>window.location.href = 'login.php';</script>";
+        }
+    }
+
+     if(isset($_GET['remove_friend'])) {
+        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+            $msg = "16|" . $_GET['remove_friend'] . "|" . $_SESSION['id_user'] . "|";
+            $request->crudFriend($msg);
+
+            // $request->removeFriend($msg);
+        }
+        else {
+            echo "<script>alert('You have to log in first');</script>";
+            echo "<script>window.location.href = 'login.php';</script>";
+        }
+    }
+
+    if(isset($_GET['add_id_friend'])) {
+        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+            $msg = "13|" . $_SESSION['id_user'] . "|" . $_GET['add_id_friend'] . "|";
+            $request->crudFriend($msg);
+
+            // $request->addFriend($msg);
+        }
+        else {
+            echo "<script>alert('You have to log in first');</script>";
+            echo "<script>window.location.href = 'login.php';</script>";
+        }
+    }
+
+    if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
+        $request->getFriendRequest();
+        $request->getFriendList();
+        $request->getAllUser();
+    }
+    else {
+        echo "<script>alert('You have to log in first');</script>";
+        echo "<script>window.location.href = 'login.php';</script>";
+    }
+    ?>
     <header class="bg-dark py-5">
         <div class="container px-4 px-lg-5 my-5">
             <div class="text-center text-white">
@@ -85,39 +154,23 @@
                 <!-- <li href="#" class="list-group-item title">
                     Your friend zone
                 </li> -->
-                <li href="#" class="list-group-item text-left">
-                    <img class="img-thumbnail" src="https://icons.veryicon.com/png/o/miscellaneous/standard/user-274.png">
-                    <label class="name">
-                        Juan guillermo cuadrado<br>
-                    </label>
-                    <label class="pull-right">
-                        <a class="btn btn-success btn-xs glyphicon glyphicon-ok" href="#">Accept</a>
-                        <a class="btn btn-danger  btn-xs glyphicon glyphicon-trash" href="#">Deny</a>
-                    </label>
-                    <div class="break"></div>
-                </li>
-                <li href="#" class="list-group-item text-left">
-                    <img class="img-thumbnail" src="https://icons.veryicon.com/png/o/miscellaneous/standard/user-274.png">
-                    <label class="name">
-                        James Rodriguez (10)
-                    </label>
-                    <label class="pull-right">
-                        <a class="btn btn-success btn-xs glyphicon glyphicon-ok" href="#">Accept</a>
-                        <a class="btn btn-danger  btn-xs glyphicon glyphicon-trash" href="#">Deny</a>
-                    </label>
-                    <div class="break"></div>
-                </li>
-                <li href="#" class="list-group-item text-left">
-                    <img class="img-thumbnail" src="https://icons.veryicon.com/png/o/miscellaneous/standard/user-274.png">
-                    <label class="name">
-                        Mariana pajon
-                    </label>
-                    <label class="pull-right">
-                        <a class="btn btn-success btn-xs glyphicon glyphicon-ok" href="#">Accept</a>
-                        <a class="btn btn-danger  btn-xs glyphicon glyphicon-trash" href="#">Deny</a>
-                    </label>
-                    <div class="break"></div>
-                </li>
+                <?php 
+                    foreach($_SESSION['friend_request'] as $friend_request) {
+                        echo(" <li href=\"#\" class=\"list-group-item text-left\">
+                            <img class=\"img-thumbnail\" src=\"https://icons.veryicon.com/png/o/miscellaneous/standard/user-274.png\">
+                            <label class=\"name\">
+                                ". $friend_request->get_username() ."
+                            </label>
+                            <label class=\"pull-right\">
+                                <a class=\"btn btn-success btn-xs glyphicon glyphicon-ok\" href=\"list.php?accept_friend=". $friend_request->get_id_user() ."\">Accept</a>
+                                <a class=\"btn btn-danger  btn-xs glyphicon glyphicon-trash\" href=\"list.php?deny_friend=". $friend_request->get_id_user() ."\">Deny</a>
+                            </label>
+                            <div class=\"break\"></div>
+                        </li>
+                        ");
+                    }
+                ?>               
+               
             </ul>
         </div>
     </div>
@@ -131,36 +184,50 @@
                 <!-- <li href="#" class="list-group-item title">
                     Your friend zone
                 </li> -->
-                <li href="#" class="list-group-item text-left">
-                    <img class="img-thumbnail" src="https://icons.veryicon.com/png/o/miscellaneous/standard/user-274.png">
-                    <label class="name">
-                        Juan guillermo cuadrado<br>
-                    </label>
-                    <label class="pull-right">
-                        <a class="btn btn-danger  btn-xs glyphicon glyphicon-trash" href="#">Unfriend</a>
-                    </label>
-                    <div class="break"></div>
-                </li>
-                <li href="#" class="list-group-item text-left">
-                    <img class="img-thumbnail" src="https://icons.veryicon.com/png/o/miscellaneous/standard/user-274.png">
-                    <label class="name">
-                        James Rodriguez (10)
-                    </label>
-                    <label class="pull-right">
-                        <a class="btn btn-danger  btn-xs glyphicon glyphicon-trash" href="#">Unfriend</a>
-                    </label>
-                    <div class="break"></div>
-                </li>
-                <li href="#" class="list-group-item text-left">
-                    <img class="img-thumbnail" src="https://icons.veryicon.com/png/o/miscellaneous/standard/user-274.png">
-                    <label class="name">
-                        Mariana pajon
-                    </label>
-                    <label class="pull-right">
-                        <a class="btn btn-danger  btn-xs glyphicon glyphicon-trash" href="#">Unfriend</a>
-                    </label>
-                    <div class="break"></div>
-                </li>
+                <?php
+                    foreach($_SESSION['friend_list'] as $friend) {
+                        echo("<li href=\"#\" class=\"list-group-item text-left\">
+                            <img class=\"img-thumbnail\" src=\"https://icons.veryicon.com/png/o/miscellaneous/standard/user-274.png\">
+                            <label class=\"name\">
+                                " . $friend->get_username() . "
+                            </label>
+                            <label class=\"pull-right\">
+                                <a class=\"btn btn-danger  btn-xs glyphicon glyphicon-trash\" href=\"list.php?remove_friend=". $friend->get_id_user() ."\">Unfriend</a>
+                            </label>
+                            <div class=\"break\"></div>
+                        </li>
+                        ");
+                    }
+                ?>
+                
+            </ul>
+        </div>
+    </div>
+     <div class="container px-4 px-lg-5 mt-5">
+        <h1 class="text-center">Friends you may know</h1>
+        </div>
+    <div class="container bootstrap snippets bootdey">
+        <div class="jumbotron list-content">
+            <ul class="list-group">
+                <!-- <li href="#" class="list-group-item title">
+                    Your friend zone
+                </li> -->
+                <?php
+                    foreach($_SESSION['user_list'] as $user) {
+                        echo("<li href=\"#\" class=\"list-group-item text-left\">
+                            <img class=\"img-thumbnail\" src=\"https://icons.veryicon.com/png/o/miscellaneous/standard/user-274.png\">
+                            <label class=\"name\">
+                                " . $user->get_username() . "
+                            </label>
+                            <label class=\"pull-right\">
+                                <a class=\"btn btn-success btn-xs glyphicon glyphicon-ok\" href=\"list.php?add_id_friend=". $user->get_id_user() ."\">Add friend</a>
+                            </label>
+                            <div class=\"break\"></div>
+                        </li>
+                        ");
+                    }
+                ?>
+                
             </ul>
         </div>
     </div>

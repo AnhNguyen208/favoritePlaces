@@ -31,9 +31,14 @@
         $request->getPlaceList();
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
             $request->getFriendList();
-            // echo $_SESSION['friend_list'];
+           
         }
-
+        
+        if(isset($_POST['logout'])) {
+            $request->logout();
+            echo "<script>window.location.href = 'index.php';</script>";
+        }
+        
     ?>
     <!-- Header-->
     <header class="bg-dark py-5">
@@ -54,8 +59,8 @@
                 } else {
                     $total = 0;
                 }
-                if(isset($_SESSION['friend_list'])) {
-                    $friend = $_SESSION['friend_list'];
+                if(isset($_SESSION['friend_list_html'])) {
+                    $friend = $_SESSION['friend_list_html'];
                 }
                 else {
                     $friend = "";
@@ -111,26 +116,21 @@
                             </div>
                     ");
                 }
-
                 if (isset($_GET['AddFavorite'])) {
-                    if (isset($_SESSION['login']) && ($_SESSION['login'] == 1)) {
-                        //echo "<script>alert('Add favorite: ". $_GET['AddFavorite'] ."');</script>";
-                       $request->add_favorite_place();
-                    }
+                    if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+                        $msg = "05|" . $_SESSION['id_user'] . "|" . $_GET['AddFavorite'] . "|";
+                        $request->addFavoritePlace($msg);
+                    }       
                     else {
                         echo "<script>alert('You have to log in first');</script>";
                         echo "<script>window.location.href = 'login.php';</script>";
                     }
                 }
-
-                if( isset($_POST['friend']) && isset($_POST['id_place'])) {
+                
+                if(isset($_POST['friend']) && isset($_POST['id_place'])) {
                     $request->sharePlace();
-                    // echo "<script>alert('share to ". $_POST['friend'] ." place " . $_POST['id_place'] . "');</script>";
-                }
-
-                if(isset($_POST['logout'])) {
-                    $request->logout();
-                }
+                }       
+               
                 ?>
             </div>
         </div>
