@@ -25,10 +25,10 @@
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
             if(isset($_GET['shared_by_id']) && isset($_GET['id_place'])) {
                 $msg = "11|" . "3" . "|" . $_SESSION['id_user'] . "|" . $_GET['shared_by_id'] . "|" . $_GET['id_place'] ."|";
-                $request->deleteFavorPlace($msg);
+                $request->favoritePlace($msg);
             } else if (isset($_GET['id_place'])) {
                 $msg = "11|" . "2" . "|" . $_SESSION['id_user'] . "|" . $_GET['id_place'] ."|";
-                $request->deleteFavorPlace($msg);
+                $request->favoritePlace($msg);
             }
             $request->getFavouriteList();
             $request->getListSharedPlaces();

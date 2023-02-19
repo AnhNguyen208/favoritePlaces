@@ -117,7 +117,7 @@
                 if (isset($_GET['AddFavorite'])) {
                     if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
                         $msg = "05|" . $_SESSION['id_user'] . "|" . $_GET['AddFavorite'] . "|";
-                        $request->addFavoritePlace($msg);
+                        $request->favoritePlace($msg);
                     }       
                     else {
                         echo "<script>alert('You have to log in first');</script>";
@@ -126,7 +126,8 @@
                 }
                 
                 if(isset($_POST['friend']) && isset($_POST['id_place'])) {
-                    $request->sharePlace();
+                    $msg = "07|" . $_POST['friend'] . "|" . $_SESSION['id_user'] . "|" . $_POST['id_place'] . "|";
+                    $request->favoritePlace($msg);
                 }       
                
                 ?>
