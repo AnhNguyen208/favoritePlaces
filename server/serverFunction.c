@@ -120,6 +120,16 @@ void handle_message(char* message, int socket) {
         removeFriend(message, socket);
         break;
     }
+    case BACKUP: {
+        printf("Back up data\n");
+        backUp(message, socket);
+        break;
+    }
+    case RESTORE: {
+        printf("Restore\n");
+        restore(message, socket);
+        break;
+    }
     default:
         break;
     }
@@ -551,7 +561,7 @@ void sharePlace(char* message, int socket) {
     }
     MYSQL_ROW row;
     if ((row = mysql_fetch_row(result)) == NULL) {
-        sprintf(query1, "INSERT INTO favoriteplaces (is_user, shared_by_id, id_place) VALUES (%d, %d, %d);", atoi(is_user), atoi(shared_by_id), atoi(id_place));
+        sprintf(query1, "INSERT INTO favoriteplaces (is_user, shared_by_id, id_place, status) VALUES (%d, %d, %d, 1);", atoi(is_user), atoi(shared_by_id), atoi(id_place));
         if (mysql_query(con, query1)) {
             sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
             send(socket, serverMess, strlen(serverMess), 0);
@@ -613,7 +623,38 @@ void showListFriend(char* message, int socket) {
 }
 
 void addPlace(char* message, int socket) {
+    printf("Start add place\n");
+    char name[30];
+    char category[20];
+    char image[50];
+    char description[50];
+    char serverMess[BUFF_SIZE] = "\0";
+    char query[BUFF_SIZE] = "\0";
+    char* token;
 
+    // Get infor
+    printf("message: %s\n", message);
+    token = strtok(message, "|");
+    token = strtok(NULL, "|");
+    strcpy(name, token);
+    token = strtok(NULL, "|");
+    strcpy(category, token);
+    token = strtok(NULL, "|");
+    strcpy(image, token);
+    token = strtok(NULL, "|");
+    strcpy(description, token);
+
+    sprintf(query, "INSERT INTO places (name, type, image, description) VALUES ('%s', '%s', '%s', '%s');", name, category, image, description);
+    printf("%s\n", query);
+    if (mysql_query(con, query)) {
+        sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+        send(socket, serverMess, strlen(serverMess), 0);
+        return;
+    }
+    sprintf(serverMess, "%d|Success!!!|\n", ADD_PLACE_SUCCESS);
+    send(socket, serverMess, strlen(serverMess), 0);
+    printf("Server message: %s\n", serverMess);
+    return;
 }
 
 void deleteFavoritePlace(char* message, int socket) {
@@ -816,7 +857,7 @@ void denyFriend(char* message, int socket) {
         send(socket, serverMess, strlen(serverMess), 0);
         return;
     }
-    
+
     sprintf(serverMess, "%d|Success!!!|\n", REQUEST_SUCCESS);
     send(socket, serverMess, strlen(serverMess), 0);
     printf("Server message: %s\n", serverMess);
@@ -855,6 +896,155 @@ void removeFriend(char* message, int socket) {
         return;
     }
     sprintf(serverMess, "%d|Success!!!|\n", REQUEST_SUCCESS);
+    send(socket, serverMess, strlen(serverMess), 0);
+    printf("Server message: %s\n", serverMess);
+    return;
+}
+
+void backUp(char* message, int socket) {
+    printf("Start back up\n");
+    char user[BUFF_SIZE];
+    char filename[30];
+    char serverMess[BUFF_SIZE] = "\0";
+    char query[200] = "\0";
+    char* token;
+    FILE* file;
+
+    // Get infor
+    printf("message: %s\n", message);
+    token = strtok(message, "|");
+    token = strtok(NULL, "|");
+    strcpy(user, token);
+
+    sprintf(filename, "./backup/%d.txt", atoi(user));
+    if ((file = fopen(filename, "w")) == NULL)
+    {
+        perror("Error opening file image");
+        exit(1);
+    }
+
+    sprintf(query, "SELECT * FROM favoriteplaces WHERE is_user = %d AND shared_by_id IS NULL", atoi(user));
+    printf("%s\n", query);
+    if (mysql_query(con, query)) {
+        sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+        send(socket, serverMess, strlen(serverMess), 0);
+        return;
+    }
+    MYSQL_RES* result = mysql_store_result(con);
+    printf("Number row: %lld\n", mysql_num_rows(result));
+    fprintf(file, "%lld\n", mysql_num_rows(result));
+
+    if (result == NULL) {
+        finish_with_error(con);
+    }
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(result)))
+    {
+        fprintf(file, "%s %s %s %s\n", row[0], row[1], row[3], row[4]);
+    }
+
+    sprintf(query, "SELECT * FROM favoriteplaces WHERE is_user = %d AND shared_by_id IS NOT NULL", atoi(user));
+    printf("%s\n", query);
+    if (mysql_query(con, query)) {
+        sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+        send(socket, serverMess, strlen(serverMess), 0);
+        return;
+    }
+    result = mysql_store_result(con);
+    fprintf(file, "%lld\n", mysql_num_rows(result));
+    printf("Number row: %lld\n", mysql_num_rows(result));
+    if (result == NULL) {
+        finish_with_error(con);
+    }
+    while ((row = mysql_fetch_row(result)))
+    {
+        fprintf(file, "%s %s %s %s %s\n", row[0], row[1], row[2], row[3], row[4]);
+    }
+
+    fclose(file);
+    sprintf(serverMess, "%d|Success!!!|\n", BACKUP_SUCCESS);
+    send(socket, serverMess, strlen(serverMess), 0);
+    printf("Server message: %s\n", serverMess);
+    return;
+}
+
+void restore(char* message, int socket) {
+    printf("Start back up\n");
+    int number;
+    int value[5];
+    char user[BUFF_SIZE];
+    char filename[30];
+    char serverMess[BUFF_SIZE] = "\0";
+    char query[200] = "\0";
+    char query1[200] = "\0";
+    char* token;
+    FILE* file;
+
+    // Get infor
+    printf("message: %s\n", message);
+    token = strtok(message, "|");
+    token = strtok(NULL, "|");
+    strcpy(user, token);
+
+    sprintf(filename, "./backup/%d.txt", atoi(user));
+    if ((file = fopen(filename, "r")) == NULL)
+    {
+        perror("Error opening file image");
+        exit(1);
+    }
+
+    fscanf(file, "%d", &number);
+    for (int i = 0; i < number; i++) {
+        fscanf(file, "%d %d %d %d", &value[0], &value[1], &value[2], &value[3]);
+        sprintf(query, "SELECT * FROM favoriteplaces WHERE id = %d", value[0]);
+        printf("%s\n", query);
+        if (mysql_query(con, query)) {
+            sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+            send(socket, serverMess, strlen(serverMess), 0);
+            return;
+        }
+        MYSQL_RES* result = mysql_store_result(con);
+        if (result == NULL) {
+            finish_with_error(con);
+        }
+        MYSQL_ROW row;
+        if ((row = mysql_fetch_row(result)) == NULL) {
+            sprintf(query1, "INSERT INTO favoriteplaces (id, is_user, id_place, status) VALUES (%d, %d, %d, %d);", value[0], value[1], value[2], value[3]);
+            if (mysql_query(con, query1)) {
+                sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+                send(socket, serverMess, strlen(serverMess), 0);
+                return;
+            }
+        }
+    }
+
+    fscanf(file, "%d", &number);
+    for (int i = 0; i < number; i++) {
+        fscanf(file, "%d %d %d %d %d", &value[0], &value[1], &value[2], &value[3], &value[4]);
+        sprintf(query, "SELECT * FROM favoriteplaces WHERE id = %d", value[0]);
+        printf("%s\n", query);
+        if (mysql_query(con, query)) {
+            sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+            send(socket, serverMess, strlen(serverMess), 0);
+            return;
+        }
+        MYSQL_RES* result = mysql_store_result(con);
+        if (result == NULL) {
+            finish_with_error(con);
+        }
+        MYSQL_ROW row;
+        if ((row = mysql_fetch_row(result)) == NULL) {
+            sprintf(query1, "INSERT INTO favoriteplaces (id, is_user, shared_by_id, id_place, status) VALUES (%d, %d, %d, %d, %d);", value[0], value[1], value[2], value[3], value[4]);
+            if (mysql_query(con, query1)) {
+                sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+                send(socket, serverMess, strlen(serverMess), 0);
+                return;
+            }
+        }
+    }
+
+    fclose(file);
+    sprintf(serverMess, "%d|Success!!!|\n", BACKUP_SUCCESS);
     send(socket, serverMess, strlen(serverMess), 0);
     printf("Server message: %s\n", serverMess);
     return;

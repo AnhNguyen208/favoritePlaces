@@ -20,6 +20,8 @@ void addFriend(char*, int);
 void acceptFriend(char*, int);
 void denyFriend(char*, int);
 void removeFriend(char*, int);
+void backUp(char*, int);
+void restore(char*, int);
 void finish_with_error(MYSQL* con);
 void encryptPassword(char*);
 

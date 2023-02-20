@@ -207,12 +207,11 @@
             socket_close($socket);
         }
 
-        function addFavoritePlace($msg) {
+        function favoritePlace($msg) {
             $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
 
             // connect to server
             $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
-
 
             $ret = socket_write($socket, $msg, strlen($msg));
             if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
@@ -225,8 +224,16 @@
 
             if ($response[0] == "13") {
                 echo "<script>alert('Add success');</script>";
-            } else {
-                echo "<script>alert('Add fail');</script>";
+            }
+
+            else if ($response[0] == "19") {
+                echo "<script>alert('Share success');</script>";
+            }
+            else if ($response[0] == "26") {
+                echo "<script>alert('Delete success');</script>";
+            }
+            else {
+                echo "<script>alert('Fail');</script>";
             }
             socket_close($socket);
         }
@@ -288,31 +295,6 @@
                     echo "<script>alert('Friend loading fail');</script>";
                 }
                 $_SESSION["position"] += 1;
-            }
-            socket_close($socket);
-        }
-
-        function sharePlace() {
-            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
-
-            // connect to server
-            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
-
-            $msg = "07|" . $_POST['friend'] . "|" . $_SESSION['id_user'] . "|" . $_POST['id_place'] . "|";
-
-            $ret = socket_write($socket, $msg, strlen($msg));
-            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
-
-            // receive response from server
-            $response = socket_read($socket, 1024);
-            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
-
-            $response = explode("|", $response);
-
-            if ($response[0] == "19") {
-                echo "<script>alert('Share success');</script>";
-            } else {
-                echo "<script>alert('Share fail');</script>";
             }
             socket_close($socket);
         }
@@ -464,11 +446,7 @@
             socket_close($socket);
         }
 
-        function addPlace() {
-
-        }
-
-        function deleteFavorPlace($msg) {
+        function addPlace($msg) {
             $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
 
             // connect to server
@@ -483,10 +461,11 @@
 
             $response = explode("|", $response);
 
-            if ($response[0] == "26") {
-                echo "<script>alert('Delete success');</script>";
+            if ($response[0] == "24") {
+                echo "<script>alert('Add success');</script>";
+                echo "<script>window.location.href = 'index.php';</script>";
             } else {
-                echo "<script>alert('Delete fail');</script>";
+                echo "<script>alert('Failed');</script>";
             }
             socket_close($socket);
         }
@@ -566,6 +545,33 @@
             if ($response[0] == "29") {
                 echo "<script>alert('Success');</script>";
             } else {
+                echo "<script>alert('Failed');</script>";
+            }
+            socket_close($socket);
+        }
+
+        function backUpAndRestore($msg) {
+            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
+
+            // connect to server
+            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
+
+            $ret = socket_write($socket, $msg, strlen($msg));
+            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            // receive response from server
+            $response = socket_read($socket, 1024);
+            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            $response = explode("|", $response);
+
+            if ($response[0] == "31") {
+                echo "<script>alert('Back up success');</script>";
+            }
+            else if ($response[0] == "32") {
+                echo "<script>alert('Restore success');</script>";
+            } 
+            else {
                 echo "<script>alert('Failed');</script>";
             }
             socket_close($socket);

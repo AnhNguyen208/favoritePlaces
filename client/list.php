@@ -74,7 +74,6 @@
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
             $msg = "14|" . $_GET['accept_friend'] . "|" . $_SESSION['id_user'] . "|";
             $request->crudFriend($msg);
-            // $request->acceptFriendRequest($msg);
         }
         else {
             echo "<script>alert('You have to log in first');</script>";
@@ -86,8 +85,6 @@
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
             $msg = "15|" . $_GET['deny_friend'] . "|" . $_SESSION['id_user'] . "|";
             $request->crudFriend($msg);
-
-            // $request->denyFriendRequest($msg);
         }
         else {
             echo "<script>alert('You have to log in first');</script>";
@@ -99,8 +96,6 @@
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
             $msg = "16|" . $_GET['remove_friend'] . "|" . $_SESSION['id_user'] . "|";
             $request->crudFriend($msg);
-
-            // $request->removeFriend($msg);
         }
         else {
             echo "<script>alert('You have to log in first');</script>";
@@ -112,8 +107,6 @@
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
             $msg = "13|" . $_SESSION['id_user'] . "|" . $_GET['add_id_friend'] . "|";
             $request->crudFriend($msg);
-
-            // $request->addFriend($msg);
         }
         else {
             echo "<script>alert('You have to log in first');</script>";

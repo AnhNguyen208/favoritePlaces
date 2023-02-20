@@ -31,7 +31,6 @@
         $request->getPlaceList();
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
             $request->getFriendList();
-           
         }
         
         if(isset($_POST['logout'])) {
@@ -72,7 +71,7 @@
                                     <img class=\"card-img-top\" src=\"" . $_SESSION['place_list'][$i]->get_image() . "\" alt=\"" .  $_SESSION['place_list'][$i]->get_image() . "\" />
                                     <div class=\"card-body p-4\">
                                         <div class=\"text-center\">
-                                            <h5 class=\"fw-bolder\">" . $_SESSION['place_list'][$i]->get_name() . "</h5>
+                                            <h5 class=\"fw-bolder\" style=\"height:50px\">" . $_SESSION['place_list'][$i]->get_name() . "</h5>
                                                     " . $_SESSION['place_list'][$i]->get_type() . "
                                                     ". "<br>" . $_SESSION['place_list'][$i]->get_description() . "
 
@@ -119,7 +118,7 @@
                 if (isset($_GET['AddFavorite'])) {
                     if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
                         $msg = "05|" . $_SESSION['id_user'] . "|" . $_GET['AddFavorite'] . "|";
-                        $request->addFavoritePlace($msg);
+                        $request->favoritePlace($msg);
                     }       
                     else {
                         echo "<script>alert('You have to log in first');</script>";
@@ -128,7 +127,8 @@
                 }
                 
                 if(isset($_POST['friend']) && isset($_POST['id_place'])) {
-                    $request->sharePlace();
+                    $msg = "07|" . $_POST['friend'] . "|" . $_SESSION['id_user'] . "|" . $_POST['id_place'] . "|";
+                    $request->favoritePlace($msg);
                 }       
                
                 ?>
