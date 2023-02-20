@@ -10,6 +10,7 @@
                 <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="myFavor.php">My Favorite Places</a></li>
                 <li class="nav-item"><a class="nav-link" href="list.php">Friends</a></li>
+                <li class="nav-item"><a class="nav-link" href="addPlace.php">Add Place</a></li>
             </ul>
             <form class="nav-bar-nav ms-auto" method="post">
                 <?php

@@ -38,10 +38,10 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm-8 col-sm-offset-2 text">
-                        <h1><strong>Plasha</strong> Login Form</h1>
+                        <h1><strong>Plasha</strong> Add Place Form</h1>
                         <div class="description">
                             <p>
-                                This is PlaSha login form
+                                This is PlaSha add place form
                             </p>
                         </div>
                     </div>
@@ -50,27 +50,35 @@
                     <div class="col-sm-6 col-sm-offset-3 form-box">
                         <div class="form-top">
                             <div class="form-top-left">
-                                <h3>Login to our site</h3>
-                                <p>Enter your username and password to log on:</p>
+                                <h3>Let's share your place to our site</h3>
+                                <p>Enter information of the place:</p>
                             </div>
                             <div class="form-top-right">
                                 <i class="fa fa-lock"></i>
                             </div>
                         </div>
                         <div class="form-bottom">
-                            <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="login-form">
+                            <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" enctype="multipart/form-data" method="post" class="login-form">
                                 <div class="form-group">
-                                    <label class="sr-only" for="username">Username</label>
-                                    <input type="text" name="username" placeholder="Username..." class="form-username form-control" id="username">
+                                    <label class="sr-only" for="placename">Placename</label>
+                                    <input type="text" name="placename" placeholder="Place's name..." class="form-placename form-control" id="placename">
                                 </div>
                                 <div class="form-group">
-                                    <label class="sr-only" for="password">Password</label>
-                                    <input type="password" name="password" placeholder="Password..." class="form-password form-control" id="password">
+                                    <label class="sr-only" for="category">Category</label>
+                                    <input type="text" name="category" placeholder="Category..." class="form-placename form-control" id="category">
                                 </div>
-                                <button type="submit" class="btn ">Sign in!</button>
+                                <div class="form-group">
+                                    <label class="sr-only" for="description">Description</label>
+                                    <input type="text" name="description" placeholder="Description..." class="form-placename form-control" id="description">
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="image">Image</label>
+                                    <input type="file" name="image" class="form-placename form-control" id="image">
+                                </div>
+                                <button type="submit" class="btn ">Create!</button>
 
                             </form>
-                            <a href="register.php"><button class="btn" style="margin-top: 10px;width: 100%;">Create account</button></a>
+                            <a href="index.php"><button class="btn" style="margin-top: 10px;width: 100%;">Back to Home</button></a>
                         </div>
                     </div>
                 </div>

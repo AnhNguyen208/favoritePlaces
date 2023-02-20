@@ -60,9 +60,9 @@
 <body>
     <?php
     session_start();
-    include("navbar.php"); 
+    include("navbar.php");
     include("request.php");
-    
+
     $request = new Request();
 
     if(isset($_POST['logout'])) {
@@ -144,10 +144,7 @@
         </div>
         <div class="jumbotron list-content">
             <ul class="list-group">
-                <!-- <li href="#" class="list-group-item title">
-                    Your friend zone
-                </li> -->
-                <?php 
+                <?php
                     foreach($_SESSION['friend_request'] as $friend_request) {
                         echo(" <li href=\"#\" class=\"list-group-item text-left\">
                             <img class=\"img-thumbnail\" src=\"https://icons.veryicon.com/png/o/miscellaneous/standard/user-274.png\">
@@ -155,15 +152,15 @@
                                 ". $friend_request->get_username() ."
                             </label>
                             <label class=\"pull-right\">
-                                <a class=\"btn btn-success btn-xs glyphicon glyphicon-ok\" href=\"list.php?accept_friend=". $friend_request->get_id_user() ."\">Accept</a>
-                                <a class=\"btn btn-danger  btn-xs glyphicon glyphicon-trash\" href=\"list.php?deny_friend=". $friend_request->get_id_user() ."\">Deny</a>
+                                <a class=\"btn btn-outline-dark mt-auto\" style=\"width: 60px;\" href=\"list.php?accept_friend=". $friend_request->get_id_user() ."\">Accept</a>
+                                <a class=\"btn btn-outline-dark mt-auto\" style=\"width: 60px;\" href=\"list.php?deny_friend=". $friend_request->get_id_user() ."\">Deny</a>
                             </label>
                             <div class=\"break\"></div>
                         </li>
                         ");
                     }
-                ?>               
-               
+                ?>
+
             </ul>
         </div>
     </div>
@@ -185,14 +182,14 @@
                                 " . $friend->get_username() . "
                             </label>
                             <label class=\"pull-right\">
-                                <a class=\"btn btn-danger  btn-xs glyphicon glyphicon-trash\" href=\"list.php?remove_friend=". $friend->get_id_user() ."\">Unfriend</a>
+                                <a class=\"btn btn-outline-dark mt-auto\" href=\"list.php?remove_friend=". $friend->get_id_user() ."\">Unfriend</a>
                             </label>
                             <div class=\"break\"></div>
                         </li>
                         ");
                     }
                 ?>
-                
+
             </ul>
         </div>
     </div>
@@ -213,14 +210,14 @@
                                 " . $user->get_username() . "
                             </label>
                             <label class=\"pull-right\">
-                                <a class=\"btn btn-success btn-xs glyphicon glyphicon-ok\" href=\"list.php?add_id_friend=". $user->get_id_user() ."\">Add friend</a>
+                                <a class=\"btn btn-outline-dark mt-auto\" href=\"list.php?add_id_friend=". $user->get_id_user() ."\">Add friend</a>
                             </label>
                             <div class=\"break\"></div>
                         </li>
                         ");
                     }
                 ?>
-                
+
             </ul>
         </div>
     </div>

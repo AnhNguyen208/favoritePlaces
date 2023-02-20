@@ -74,6 +74,8 @@
                                         <div class=\"text-center\">
                                             <h5 class=\"fw-bolder\">" . $_SESSION['place_list'][$i]->get_name() . "</h5>
                                                     " . $_SESSION['place_list'][$i]->get_type() . "
+                                                    ". "<br>" . $_SESSION['place_list'][$i]->get_description() . "
+
                                         </div>
                                     </div>
                                     <div class=\"card-footer p-4 pt-0 border-top-0 bg-transparent\">
@@ -92,7 +94,7 @@
                                             <input type=\"hidden\" name=\"id_place\" value=\"" . $i . "\">
                                             <div class=\"modal-content\">
                                                 <div class=\"modal-header\">
-                                                    <h5 class=\"modal-title\" id=\"exampleModalLabel\">Modal title</h5>
+                                                    <h5 class=\"modal-title\" id=\"exampleModalLabel\">Share This Place To</h5>
                                                     <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">
                                                         <span aria-hidden=\"true\">&times;</span>
                                                     </button>
@@ -104,8 +106,8 @@
                                                     </select>
                                                 </div>
                                                 <div class=\"modal-footer\">
-                                                    <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button>
-                                                    <input class=\"btn btn-primary\" type=\"submit\" value=\"Share\">
+                                                    <button type=\"button\" class=\"btn btn-outline-dark mt-auto\" data-dismiss=\"modal\">Close</button>
+                                                    <input class=\"btn btn-outline-dark mt-auto\" type=\"submit\" value=\"Share\">
                                                 </div>
                                             </div>
                                         </form>
