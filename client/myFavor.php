@@ -29,28 +29,22 @@
             } else if(isset($_GET['backUp'])) {
                 $msg = "17" . "|" .$_SESSION['id_user'] ."|";
                 $request->backUpAndRestore($msg);
-            } else if(isset($_GET['shared_by_id']) && isset($_GET['id_place'])) {
+            } else if(isset($_GET['restore'])) {
+                $msg = "18" . "|" .$_SESSION['id_user'] ."|";
+                $request->backUpAndRestore($msg);
+            }else if(isset($_GET['shared_by_id']) && isset($_GET['id_place'])) {
                 $msg = "11|" . "3" . "|" . $_SESSION['id_user'] . "|" . $_GET['shared_by_id'] . "|" . $_GET['id_place'] ."|";
                 $request->favoritePlace($msg);
             } else if (isset($_GET['id_place'])) {
                 $msg = "11|" . "2" . "|" . $_SESSION['id_user'] . "|" . $_GET['id_place'] ."|";
                 $request->favoritePlace($msg);
             }
-            
             $request->getFavouriteList();
             $request->getListSharedPlaces();
-            
         }
         else {
             echo "<script>alert('You have to log in first');</script>";
             echo "<script>window.location.href = 'login.php';</script>";
-        }
-
-        
-
-        if(isset($_GET['restore'])) {
-            $msg = "18" . "|" .$_SESSION['id_user'] ."|";
-            $request->backUpAndRestore($msg);
         }
     ?>
     <!-- Header-->
@@ -92,8 +86,6 @@
                 } else {
                     $total = 0;
                 }
-
-                
             ?>
             </div>
         </div>
