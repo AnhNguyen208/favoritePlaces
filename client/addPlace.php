@@ -31,6 +31,18 @@
     <?php
     session_start();
     include("request.php");
+
+    if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
+        if(isset($_POST['addPlace'])) {
+            $request = new Request();
+            $msg = "10" . "|" . $_POST['placename'] . "|" . $_POST['category'] . "|" . "assets/image/" . $_FILES['image']['name'] . "|" . $_POST['description'] . "|";
+            $request->addPlace($msg);
+        }
+    }
+    else {
+        echo "<script>alert('You have to log in first');</script>";
+        echo "<script>window.location.href = 'login.php';</script>";
+    }
     ?>
     <!-- Top content -->
     <div class="top-content">
@@ -75,7 +87,7 @@
                                     <label class="sr-only" for="image">Image</label>
                                     <input type="file" name="image" class="form-placename form-control" id="image">
                                 </div>
-                                <button type="submit" class="btn ">Create!</button>
+                                <button type="submit" class="btn" name="addPlace">Create!</button>
 
                             </form>
                             <a href="index.php"><button class="btn" style="margin-top: 10px;width: 100%;">Back to Home</button></a>

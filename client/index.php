@@ -31,7 +31,6 @@
         $request->getPlaceList();
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
             $request->getFriendList();
-           
         }
         
         if(isset($_POST['logout'])) {

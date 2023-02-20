@@ -613,7 +613,38 @@ void showListFriend(char* message, int socket) {
 }
 
 void addPlace(char* message, int socket) {
+    printf("Start add place\n");
+    char name[30];
+    char category[20];
+    char image[50];
+    char description[50];
+    char serverMess[BUFF_SIZE] = "\0";
+    char query[BUFF_SIZE] = "\0";
+    char* token;
 
+    // Get infor
+    printf("message: %s\n", message);
+    token = strtok(message, "|");
+    token = strtok(NULL, "|");
+    strcpy(name, token);
+    token = strtok(NULL, "|");
+    strcpy(category, token);
+    token = strtok(NULL, "|");
+    strcpy(image, token);
+    token = strtok(NULL, "|");
+    strcpy(description, token);
+
+    sprintf(query, "INSERT INTO places (name, type, image, description) VALUES ('%s', '%s', '%s', '%s');", name, category, image, description);
+    printf("%s\n", query);
+    if (mysql_query(con, query)) {
+        sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+        send(socket, serverMess, strlen(serverMess), 0);
+        return;
+    }
+    sprintf(serverMess, "%d|Success!!!|\n", ADD_PLACE_SUCCESS);
+    send(socket, serverMess, strlen(serverMess), 0);
+    printf("Server message: %s\n", serverMess);
+    return;
 }
 
 void deleteFavoritePlace(char* message, int socket) {
@@ -816,7 +847,7 @@ void denyFriend(char* message, int socket) {
         send(socket, serverMess, strlen(serverMess), 0);
         return;
     }
-    
+
     sprintf(serverMess, "%d|Success!!!|\n", REQUEST_SUCCESS);
     send(socket, serverMess, strlen(serverMess), 0);
     printf("Server message: %s\n", serverMess);
