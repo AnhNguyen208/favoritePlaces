@@ -23,13 +23,20 @@
         $request = new Request();
 
         if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
-            if(isset($_GET['shared_by_id']) && isset($_GET['id_place'])) {
+            if(isset($_POST['logout'])) {
+                $request->logout();
+                echo "<script>window.location.href = 'index.php';</script>";
+            } else if(isset($_GET['backUp'])) {
+                $msg = "17" . "|" .$_SESSION['id_user'] ."|";
+                $request->backUpAndRestore($msg);
+            } else if(isset($_GET['shared_by_id']) && isset($_GET['id_place'])) {
                 $msg = "11|" . "3" . "|" . $_SESSION['id_user'] . "|" . $_GET['shared_by_id'] . "|" . $_GET['id_place'] ."|";
                 $request->favoritePlace($msg);
             } else if (isset($_GET['id_place'])) {
                 $msg = "11|" . "2" . "|" . $_SESSION['id_user'] . "|" . $_GET['id_place'] ."|";
                 $request->favoritePlace($msg);
             }
+            
             $request->getFavouriteList();
             $request->getListSharedPlaces();
             
@@ -39,9 +46,11 @@
             echo "<script>window.location.href = 'login.php';</script>";
         }
 
-        if(isset($_POST['logout'])) {
-            $request->logout();
-            echo "<script>window.location.href = 'index.php';</script>";
+        
+
+        if(isset($_GET['restore'])) {
+            $msg = "18" . "|" .$_SESSION['id_user'] ."|";
+            $request->backUpAndRestore($msg);
         }
     ?>
     <!-- Header-->
@@ -67,7 +76,7 @@
                                         <img class=\"card-img-top\" src=\"" . $_SESSION['favorite_place_list'][$i]->get_image() . "\" alt=\"" .  $_SESSION['favorite_place_list'][$i]->get_image() . "\" />
                                             <div class=\"card-body p-4\">
                                                 <div class=\"text-center\">
-                                                    <h5 class=\"fw-bolder\">" . $_SESSION['favorite_place_list'][$i]->get_name() . "</h5>
+                                                    <h5 class=\"fw-bolder\" style=\"height:50px\">" . $_SESSION['favorite_place_list'][$i]->get_name() . "</h5>
                                                         " . $_SESSION['favorite_place_list'][$i]->get_type() . "
                                                 </div>
                                             </div>
@@ -100,7 +109,7 @@
                                         <img class=\"card-img-top\" src=\"" . $_SESSION['place_list_shared'][$i]->get_image() . "\" alt=\"" .  $_SESSION['place_list_shared'][$i]->get_image() . "\" />
                                             <div class=\"card-body p-4\">
                                                 <div class=\"text-center\">
-                                                    <h5 class=\"fw-bolder\">" . $_SESSION['place_list_shared'][$i]->get_name() . "</h5>
+                                                    <h5 class=\"fw-bolder\" style=\"height:50px\">" . $_SESSION['place_list_shared'][$i]->get_name() . "</h5>
                                                         " . $_SESSION['place_list_shared'][$i]->get_type() . "
                                                     <h5 class=\"fw-bolder\"> Shared By: " . "</h5>
                                                         ". $_SESSION['place_list_shared'][$i]->get_share_by()."

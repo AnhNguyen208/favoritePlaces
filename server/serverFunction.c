@@ -120,6 +120,16 @@ void handle_message(char* message, int socket) {
         removeFriend(message, socket);
         break;
     }
+    case BACKUP: {
+        printf("Back up data\n");
+        backUp(message, socket);
+        break;
+    }
+    case RESTORE: {
+        printf("Restore\n");
+        restore(message, socket);
+        break;
+    }
     default:
         break;
     }
@@ -889,6 +899,77 @@ void removeFriend(char* message, int socket) {
     send(socket, serverMess, strlen(serverMess), 0);
     printf("Server message: %s\n", serverMess);
     return;
+}
+
+void backUp(char* message, int socket) {
+    printf("Start back up\n");
+    char user[BUFF_SIZE];
+    char filename[30];
+    char serverMess[BUFF_SIZE] = "\0";
+    char query[200] = "\0";
+    char* token;
+    FILE* file;
+
+    // Get infor
+    printf("message: %s\n", message);
+    token = strtok(message, "|");
+    token = strtok(NULL, "|");
+    strcpy(user, token);
+
+    sprintf(filename, "./backup/%d.txt", atoi(user));
+    if ((file = fopen(filename, "w")) == NULL)
+    {
+        perror("Error opening file image");
+        exit(1);
+    }
+
+    sprintf(query, "SELECT * FROM favoriteplaces WHERE is_user = %d AND shared_by_id IS NULL", atoi(user));
+    printf("%s\n", query);
+    if (mysql_query(con, query)) {
+        sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+        send(socket, serverMess, strlen(serverMess), 0);
+        return;
+    }
+    MYSQL_RES* result = mysql_store_result(con);
+    printf("Number row: %lld\n", mysql_num_rows(result));
+    fprintf(file, "%lld\n", mysql_num_rows(result));
+
+    if (result == NULL) {
+        finish_with_error(con);
+    }
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(result)))
+    {
+        fprintf(file, "%s %s %s %s\n", row[0], row[1], row[3], row[4]);
+    }
+
+    sprintf(query, "SELECT * FROM favoriteplaces WHERE is_user = %d AND shared_by_id IS NOT NULL", atoi(user));
+    printf("%s\n", query);
+    if (mysql_query(con, query)) {
+        sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+        send(socket, serverMess, strlen(serverMess), 0);
+        return;
+    }
+    result = mysql_store_result(con);
+    fprintf(file, "%lld\n", mysql_num_rows(result));
+    printf("Number row: %lld\n", mysql_num_rows(result));
+    if (result == NULL) {
+        finish_with_error(con);
+    }
+    while ((row = mysql_fetch_row(result)))
+    {
+        fprintf(file, "%s %s %s %s %s\n", row[0], row[1], row[2], row[3], row[4]);
+    }
+
+    fclose(file);
+    sprintf(serverMess, "%d|Success!!!|\n", BACKUP_SUCCESS);
+    send(socket, serverMess, strlen(serverMess), 0);
+    printf("Server message: %s\n", serverMess);
+    return;
+}
+
+void restore(char* message, int socket) {
+
 }
 
 void encryptPassword(char* password) {

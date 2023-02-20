@@ -1,6 +1,3 @@
-//
-// Created by hapq on 19/1/2023.
-//
 #ifndef NETWORKPROGRAMMING_PROTOCOL_H
 #define NETWORKPROGRAMMING_PROTOCOL_H
 
@@ -27,6 +24,9 @@ typedef enum {
     ACCEPT_FRIEND,
     DENY_FRIEND,
     REMOVE_FRIEND,
+
+    BACKUP,
+    RESTORE,
 } REQUEST_CODE;
 
 
@@ -78,6 +78,9 @@ typedef enum {
 
     REQUEST_SUCCESS,
     REQUEST_FAIL,
+
+    BACKUP_SUCCESS,
+    RESTORE_SUCCESS,
 
 } RESPONSE_CODE;
 

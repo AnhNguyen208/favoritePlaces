@@ -549,5 +549,32 @@
             }
             socket_close($socket);
         }
+
+        function backUpAndRestore($msg) {
+            $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
+
+            // connect to server
+            $result = socket_connect($socket, $_SESSION['host_server'], $_SESSION['port']) or die("socket_connect() failed.\n");
+
+            $ret = socket_write($socket, $msg, strlen($msg));
+            if (!$ret) die("client write fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            // receive response from server
+            $response = socket_read($socket, 1024);
+            if (!$response) die("client read fail:" . socket_strerror(socket_last_error()) . "\n");
+
+            $response = explode("|", $response);
+
+            if ($response[0] == "31") {
+                echo "<script>alert('Back up success');</script>";
+            }
+            else if ($response[0] == "32") {
+                echo "<script>alert('Restore success');</script>";
+            } 
+            else {
+                echo "<script>alert('Failed');</script>";
+            }
+            socket_close($socket);
+        }
     }
 ?>

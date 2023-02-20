@@ -71,7 +71,7 @@
                                     <img class=\"card-img-top\" src=\"" . $_SESSION['place_list'][$i]->get_image() . "\" alt=\"" .  $_SESSION['place_list'][$i]->get_image() . "\" />
                                     <div class=\"card-body p-4\">
                                         <div class=\"text-center\">
-                                            <h5 class=\"fw-bolder\">" . $_SESSION['place_list'][$i]->get_name() . "</h5>
+                                            <h5 class=\"fw-bolder\" style=\"height:50px\">" . $_SESSION['place_list'][$i]->get_name() . "</h5>
                                                     " . $_SESSION['place_list'][$i]->get_type() . "
                                                     ". "<br>" . $_SESSION['place_list'][$i]->get_description() . "
 
