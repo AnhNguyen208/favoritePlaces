@@ -65,56 +65,26 @@
 
     $request = new Request();
 
-    if(isset($_POST['logout'])) {
-        $request->logout();
-        echo "<script>window.location.href = 'index.php';</script>";
-    }
-
-    if(isset($_GET['accept_friend'])) {
-        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+    if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
+        if(isset($_POST['logout'])) {
+            $request->logout();
+            echo "<script>window.location.href = 'index.php';</script>";
+        } else if(isset($_GET['accept_friend'])) {
             $msg = "14|" . $_GET['accept_friend'] . "|" . $_SESSION['id_user'] . "|";
             $request->crudFriend($msg);
-        }
-        else {
-            echo "<script>alert('You have to log in first');</script>";
-            echo "<script>window.location.href = 'login.php';</script>";
-        }
-    }
-
-    if(isset($_GET['deny_friend'])) {
-        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+        } else if(isset($_GET['deny_friend'])) {
             $msg = "15|" . $_GET['deny_friend'] . "|" . $_SESSION['id_user'] . "|";
             $request->crudFriend($msg);
-        }
-        else {
-            echo "<script>alert('You have to log in first');</script>";
-            echo "<script>window.location.href = 'login.php';</script>";
-        }
-    }
-
-     if(isset($_GET['remove_friend'])) {
-        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+        } else if(isset($_GET['remove_friend'])) {
             $msg = "16|" . $_GET['remove_friend'] . "|" . $_SESSION['id_user'] . "|";
             $request->crudFriend($msg);
-        }
-        else {
-            echo "<script>alert('You have to log in first');</script>";
-            echo "<script>window.location.href = 'login.php';</script>";
-        }
-    }
-
-    if(isset($_GET['add_id_friend'])) {
-        if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )){
+            $msg = "17" . "|" .$_SESSION['id_user'] ."|";
+            $request->backUpAndRestore($msg);
+        } else if(isset($_GET['add_id_friend'])) {
             $msg = "13|" . $_SESSION['id_user'] . "|" . $_GET['add_id_friend'] . "|";
             $request->crudFriend($msg);
         }
-        else {
-            echo "<script>alert('You have to log in first');</script>";
-            echo "<script>window.location.href = 'login.php';</script>";
-        }
-    }
-
-    if(isset($_SESSION['login']) && ($_SESSION['login'] == 1 )) {
+        
         $request->getFriendRequest();
         $request->getFriendList();
         $request->getAllUser();

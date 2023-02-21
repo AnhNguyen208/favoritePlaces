@@ -887,9 +887,17 @@ void removeFriend(char* message, int socket) {
         send(socket, serverMess, strlen(serverMess), 0);
         return;
     }
+
     sprintf(query, "DELETE FROM friends WHERE user1 = %d AND user2 = %d;", atoi(user2), atoi(user1));
     printf("%s\n", query);
+    if (mysql_query(con, query)) {
+        sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
+        send(socket, serverMess, strlen(serverMess), 0);
+        return;
+    }
 
+    sprintf(query, "DELETE FROM favoriteplaces WHERE is_user = %d AND shared_by_id = %d;", atoi(user2), atoi(user1));
+    printf("%s\n", query);
     if (mysql_query(con, query)) {
         sprintf(serverMess, "%d|%s|\n", QUERY_FAIL, mysql_error(con));
         send(socket, serverMess, strlen(serverMess), 0);
@@ -1044,7 +1052,7 @@ void restore(char* message, int socket) {
     }
 
     fclose(file);
-    sprintf(serverMess, "%d|Success!!!|\n", BACKUP_SUCCESS);
+    sprintf(serverMess, "%d|Success!!!|\n", RESTORE_SUCCESS);
     send(socket, serverMess, strlen(serverMess), 0);
     printf("Server message: %s\n", serverMess);
     return;
